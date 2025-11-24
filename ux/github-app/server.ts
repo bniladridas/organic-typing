@@ -116,6 +116,12 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Organic Typing GitHub App');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// For Vercel serverless
+export default app;
+
+// For local development
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
