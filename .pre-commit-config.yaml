@@ -1,0 +1,39 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: check-added-large-files
+- repo: local
+  hooks:
+  - id: lint
+    name: ESLint
+    entry: npx eslint . --ext .ts
+    language: system
+    pass_filenames: false
+  - id: tsc
+    name: TypeScript compiler
+    entry: npx tsc --noEmit
+    language: system
+    pass_filenames: false
+  - id: test
+    name: Run tests
+    entry: npm test
+    language: system
+    pass_filenames: false
+  - id: commit-msg-check
+    name: Check commit message
+    entry: |
+      if [ $(wc -w < "$1") -gt 3 ]; then
+        echo "Commit message too long: $(wc -w < "$1") words (max 3)"
+        exit 1
+      fi
+      if ! grep -q "\`" "$1"; then
+        echo "Commit message must contain backticks for code references"
+        exit 1
+      fi
+    language: system
+    stages: [commit-msg]
+    pass_filenames: false
