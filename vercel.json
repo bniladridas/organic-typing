@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "ux/github-app/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "ux/github-app/server.ts"
+    }
+  ],
+  "functions": {
+    "ux/github-app/server.ts": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
