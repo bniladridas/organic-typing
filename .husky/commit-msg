@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx --no -- commitlint --edit $1
+
+if ! grep -q '`' "$1"; then
+  echo "Commit message must contain backticks for code references"
+  exit 1
+fi
