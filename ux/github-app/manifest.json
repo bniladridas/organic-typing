@@ -7,7 +7,8 @@
   "redirect_url": "http://localhost:3000/setup",
   "public": false,
   "default_permissions": {
-    "pull_requests": "read"
+    "pull_requests": "read",
+    "issues": "write"
   },
   "default_events": [
     "pull_request"
