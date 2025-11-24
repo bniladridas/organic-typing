@@ -12,10 +12,5 @@
       "src": "/(.*)",
       "dest": "ux/github-app/server.ts"
     }
-  ],
-  "functions": {
-    "ux/github-app/server.ts": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
