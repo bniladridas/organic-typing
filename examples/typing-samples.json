@@ -1,0 +1,13 @@
+[
+  {"key": "h", "timestamp": 1000, "type": "press"},
+  {"key": "e", "timestamp": 1050, "type": "press"},
+  {"key": "l", "timestamp": 1100, "type": "press"},
+  {"key": "l", "timestamp": 1150, "type": "press"},
+  {"key": "o", "timestamp": 1200, "type": "press"},
+  {"key": " ", "timestamp": 1300, "type": "press"},
+  {"key": "w", "timestamp": 1400, "type": "press"},
+  {"key": "o", "timestamp": 1450, "type": "press"},
+  {"key": "r", "timestamp": 1500, "type": "press"},
+  {"key": "l", "timestamp": 1550, "type": "press"},
+  {"key": "d", "timestamp": 1600, "type": "press"}
+]

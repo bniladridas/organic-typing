@@ -1,0 +1,15 @@
+{
+  "name": "Organic Typing Verifier",
+  "url": "http://localhost:3000",
+  "hook_attributes": {
+    "url": "http://localhost:3000/webhook"
+  },
+  "redirect_url": "http://localhost:3000/setup",
+  "public": false,
+  "default_permissions": {
+    "pull_requests": "read"
+  },
+  "default_events": [
+    "pull_request"
+  ]
+}

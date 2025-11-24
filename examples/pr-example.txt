@@ -1,0 +1,10 @@
+This is a sample pull request description written with organic typing patterns.
+
+Added safe keystroke capture functionality to the collector module. The new keylogger.ts file implements basic event listening for key presses and releases, storing timestamps for later analysis. This enhances our ability to model user typing rhythms without compromising security.
+
+Key changes:
+- Introduced Keylogger class with start/stop methods
+- Captures keystroke data including timing
+- Exports data for processing in the next pipeline stage
+
+Future work includes integrating with browser plugins for web-based capture.

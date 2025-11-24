@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Lint GitHub Actions
+      uses: reviewdog/action-actionlint@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.9'
+    - name: Install Node dependencies
+      run: npm install
+    - name: Install Python dependencies
+      run: pip install -r core/model/requirements.txt
+    - name: Run checks
+      run: npm run check
+    - name: Build Docker image
+      run: docker build -t organic-typing .
+    - name: Test Docker image
+      run: docker run --rm organic-typing npm run dev --version

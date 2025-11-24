@@ -1,0 +1,16 @@
+import { normalizeKeystrokes } from '../../core/processor/normalize';
+import { Keystroke } from '../../core/collector/keylogger';
+
+describe('normalizeKeystrokes', () => {
+  it('should calculate intervals correctly', () => {
+    const keystrokes: Keystroke[] = [
+      { key: 'a', timestamp: 100, type: 'press' },
+      { key: 'b', timestamp: 200, type: 'press' },
+      { key: 'c', timestamp: 300, type: 'press' },
+    ];
+    const result = normalizeKeystrokes(keystrokes);
+    expect(result[0].interval).toBe(0);
+    expect(result[1].interval).toBe(100);
+    expect(result[2].interval).toBe(100);
+  });
+});
