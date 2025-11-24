@@ -2,6 +2,7 @@ import express from 'express';
 import { Request, Response } from 'express';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
 import { Octokit } from '@octokit/rest';
+import { App } from '@octokit/app';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Keystroke } from '../../core/collector/keylogger';
@@ -18,7 +19,10 @@ type PR = {
 const app = express();
 const port = process.env.PORT || 3000;
 
-const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+const githubApp = new App({
+  appId: process.env.GITHUB_APP_ID!,
+  privateKey: process.env.GITHUB_PRIVATE_KEY!,
+});
 const signaturesPath = path.join(__dirname, 'signatures.json');
 
 function textToKeystrokes(text: string | null): Keystroke[] {
@@ -38,6 +42,7 @@ const webhooks = new Webhooks({
 });
 
 webhooks.on('pull_request.opened', async (event) => {
+  const octokit = await githubApp.getInstallationOctokit(event.payload.installation!.id);
   const pr = event.payload.pull_request as PR;
   const body = pr.body;
 
@@ -61,7 +66,7 @@ webhooks.on('pull_request.opened', async (event) => {
   fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-  await octokit.issues.createComment({
+  await (octokit as any).issues.createComment({
     owner: event.payload.repository.owner.login,
     repo: event.payload.repository.name,
     issue_number: number,
@@ -70,6 +75,7 @@ webhooks.on('pull_request.opened', async (event) => {
 });
 
 webhooks.on('pull_request.edited', async (event) => {
+  const octokit = await githubApp.getInstallationOctokit(event.payload.installation!.id);
   const pr = event.payload.pull_request as PR;
   const body = pr.body;
 
@@ -93,7 +99,7 @@ webhooks.on('pull_request.edited', async (event) => {
   fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-  await octokit.issues.createComment({
+  await (octokit as any).issues.createComment({
     owner: event.payload.repository.owner.login,
     repo: event.payload.repository.name,
     issue_number: number,
