@@ -20,7 +20,18 @@ class Verifier:
     def verify(self, input_vector):
         # Predict if human-like
         if not self.is_trained:
-            # Fallback to simple distance if not trained
-            return True  # Assume human for now
+            # Fallback to simple heuristic if not trained
+            avg_interval = input_vector[0] if len(input_vector) > 0 else 100
+            pause_count = input_vector[1] if len(input_vector) > 1 else 5
+            # Simple check: human if interval > 80ms and pauses < 10
+            return avg_interval > 80 and pause_count < 10
         prediction = self.model.predict([input_vector])
         return prediction[0] == 1  # 1 for human
+
+if __name__ == "__main__":
+    import json
+    import sys
+    vector = json.loads(sys.argv[1])
+    v = Verifier()
+    result = v.verify(vector)
+    print("Human" if result else "AI")
