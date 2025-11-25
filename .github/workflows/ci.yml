@@ -1,16 +1,17 @@
 # SPDX-License-Identifier: BSD-3-Clause
+---
 name: CI
 permissions:
   contents: read
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  test:
+  test-ubuntu:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,13 +26,15 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.14'
     - name: Install uv
       run: pip install uv
     - name: Install Node dependencies
       run: npm install
     - name: Install Python dependencies
       run: uv pip install --system -r core/model/requirements.txt
+    - name: Install yamllint
+      run: pip install yamllint
     - name: Setup Go
       uses: actions/setup-go@v6.1.0
       with:
@@ -39,9 +42,18 @@ jobs:
         cache: false
     - name: Run Go tests
       run: cd go && go test ./...
-    - name: Run checks
-      run: npm run check
+    - name: Lint
+      run: npm run lint
+    - name: Lint YAML
+      run: yamllint .
+    - name: Build
+      run: npm run build
+    - name: Run unit tests
+      run: npm run test:unit
+    - name: Run integration tests
+      run: npm run test:integration
     - name: Build Docker image
+      if: runner.os == 'Linux'
       run: docker build -t organic-typing .
     - name: Test Docker image
       run: docker run --rm organic-typing npm run dev --version
