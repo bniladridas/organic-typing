@@ -96,6 +96,10 @@ app.get('/favicon.ico', (req: Request, res: Response) => {
   res.status(204).end(); // No content for favicon
 });
 
+app.get('/favicon.png', (req: Request, res: Response) => {
+  res.status(204).end(); // No content for favicon
+});
+
 // For Vercel serverless
 export default app;
 
