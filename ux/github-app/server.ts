@@ -4,6 +4,7 @@ import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
 import { Octokit } from '@octokit/rest';
 import { App } from '@octokit/app';
 import { kv } from '@vercel/kv';
+import { execSync } from 'child_process';
 import { Keystroke } from '../../core/collector/keylogger';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
 import { calculateStats } from '../../core/processor/stats';
@@ -57,10 +58,19 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
   const normalized = normalizeKeystrokes(keystrokes);
   const stats = calculateStats(normalized);
 
-  // Call verifier (simple heuristic)
-  const avgInterval = stats.averageInterval;
-  const pauseCount = stats.pauseCount;
-  const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
+  // Encode stats using Python model
+  const statsJson = JSON.stringify(stats);
+  const encodedVector = JSON.parse(execSync(`python3 core/model/organic-encoder.py`, {
+    input: statsJson,
+    encoding: 'utf-8'
+  }).toString().trim());
+
+  // Verify using Python model
+  const vectorJson = JSON.stringify(encodedVector);
+  const verification = execSync(`python3 core/model/verifier.py`, {
+    input: vectorJson,
+    encoding: 'utf-8'
+  }).toString().trim();
 
   // Update signature atomically
   const userLogin = pr.user.login;

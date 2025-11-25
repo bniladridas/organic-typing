@@ -24,3 +24,11 @@ class OrganicEncoder:
             stats['stdInterval'],
             stats['pauseCount']
         ] + stats['rhythmVector'])
+
+if __name__ == "__main__":
+    import json
+    import sys
+    stats = json.loads(sys.stdin.read())
+    encoder = OrganicEncoder()
+    vector = encoder.encode(stats)
+    print(json.dumps(vector.tolist()))
