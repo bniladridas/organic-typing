@@ -3,8 +3,7 @@ import { Request, Response } from 'express';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
 import { Octokit } from '@octokit/rest';
 import { App } from '@octokit/app';
-import * as fs from 'fs';
-import * as path from 'path';
+import { kv } from '@vercel/kv';
 import { Keystroke } from '../../core/collector/keylogger';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
 import { calculateStats, TypingStats } from '../../core/processor/stats';
@@ -30,7 +29,6 @@ const githubApp = new App({
   appId,
   privateKey,
 });
-const signaturesPath = path.join(__dirname, 'signatures.json');
 
 function textToKeystrokes(text: string | null): Keystroke[] {
   const keystrokes: Keystroke[] = [];
@@ -63,14 +61,11 @@ webhooks.on('pull_request.opened', async (event) => {
   const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
 
   // Update signature
-  let signatures: Record<string, TypingStats> = {};
-  if (fs.existsSync(signaturesPath)) {
-    signatures = JSON.parse(fs.readFileSync(signaturesPath, 'utf8'));
-  }
+  const signatures: Record<string, TypingStats> = await kv.get('signatures') || {};
   const userLogin = pr.user.login;
   const number = pr.number;
   signatures[userLogin] = stats;
-  fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
+  await kv.set('signatures', signatures);
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
   await (octokit as Octokit).issues.createComment({
@@ -96,14 +91,11 @@ webhooks.on('pull_request.edited', async (event) => {
   const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
 
   // Update signature
-  let signatures: Record<string, TypingStats> = {};
-  if (fs.existsSync(signaturesPath)) {
-    signatures = JSON.parse(fs.readFileSync(signaturesPath, 'utf8'));
-  }
+  const signatures: Record<string, TypingStats> = await kv.get('signatures') || {};
   const userLogin = pr.user.login;
   const number = pr.number;
   signatures[userLogin] = stats;
-  fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
+  await kv.set('signatures', signatures);
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
   await (octokit as Octokit).issues.createComment({
