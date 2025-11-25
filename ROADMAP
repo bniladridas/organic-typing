@@ -1,0 +1,36 @@
+Organic Typing Roadmap
+
+Organic typing evolves through careful expansion of its capabilities. Each phase builds on the foundation of authentic signal capture, ensuring that the system remains true to human rhythm and flow.
+
+Recommendation
+
+Prioritize platform support and model refinement to broaden the reach of organic typing. Focus on collecting diverse datasets while maintaining security and privacy.
+
+Completed
+
+The core system now captures keystrokes from terminal and system-wide on Ubuntu. Data flows through normalization, encoding into vectors, and generation of organic text. CLI commands enable generation, verification, and collection with full test coverage.
+
+A recent addition enables system-wide capture on Ubuntu, accessing raw input events to record every keystroke across applications. This enhances data collection beyond terminal boundaries, providing richer organic signatures.
+
+In Progress
+
+Testing infrastructure solidifies with unit and integration tests. CI/CD ensures reliability across environments, with platform-specific handling for Linux features.
+
+Planned
+
+Expansion to additional platforms like macOS and Windows will require native input APIs. Web-based collection for browsers could use JavaScript event listeners. Model improvements demand larger, varied datasets for better generalization.
+
+Real-time verification APIs and expanded documentation will make organic typing more accessible. Performance optimizations will handle high-volume typing data efficiently.
+
+Future
+
+Mobile applications could analyze typing on touchscreens, adapting to gesture-based input. Integration with editors and IDEs would provide seamless organic feedback. Advanced dashboards might visualize typing patterns over time.
+
+Eventually, releasing open datasets for research could accelerate keystroke dynamics studies, fostering community contributions to organic typing science.
+
+References
+
+Keystroke Dynamics Research.
+Behavioral Biometrics Advances.
+Human-Computer Interaction Studies.
+Machine Learning in Typing Analysis.

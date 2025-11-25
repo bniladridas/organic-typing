@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: BSD-3-Clause
 version: '3.8'
 
 services:

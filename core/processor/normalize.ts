@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
 import { Keystroke } from '../collector/keylogger';
 
 export interface NormalizedKeystroke extends Keystroke {
