@@ -6,7 +6,7 @@ import { App } from '@octokit/app';
 import { kv } from '@vercel/kv';
 import { Keystroke } from '../../core/collector/keylogger';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
-import { calculateStats, TypingStats } from '../../core/processor/stats';
+import { calculateStats } from '../../core/processor/stats';
 
 type PR = {
   title: string;
@@ -62,11 +62,9 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
   const pauseCount = stats.pauseCount;
   const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
 
-  // Update signature
-  const signatures: Record<string, TypingStats> = await kv.get('signatures') || {};
-  const userLogin = pr.user.login;
-  signatures[userLogin] = stats;
-  await kv.set('signatures', signatures);
+   // Update signature atomically
+   const userLogin = pr.user.login;
+   await kv.hset('signatures', { [userLogin]: stats });
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
   const commentBody = isUpdate
