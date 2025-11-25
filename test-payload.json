@@ -1,0 +1,14 @@
+{
+  "action": "opened",
+  "pull_request": {
+    "title": "Test PR",
+    "body": "This is a test pull request body for manual webhook testing.",
+    "user": { "login": "testuser" },
+    "number": 1
+  },
+  "repository": {
+    "owner": { "login": "testowner" },
+    "name": "testrepo"
+  },
+  "installation": { "id": 12345 }
+}

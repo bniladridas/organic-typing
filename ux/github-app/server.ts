@@ -92,6 +92,10 @@ app.get('/', (req: Request, res: Response) => {
   res.send('Organic Typing GitHub App');
 });
 
+app.get('/favicon.ico', (req: Request, res: Response) => {
+  res.status(204).end(); // No content for favicon
+});
+
 // For Vercel serverless
 export default app;
 
