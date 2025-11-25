@@ -30,7 +30,7 @@ jobs:
     - name: Install Node dependencies
       run: npm install
     - name: Install Python dependencies
-      run: uv pip install -r core/model/requirements.txt
+      run: uv pip install --system -r core/model/requirements.txt
     - name: Run checks
       run: npm run check
     - name: Build Docker image
