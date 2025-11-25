@@ -22,7 +22,7 @@ class Verifier:
         if not self.is_trained:
             # Fallback to simple heuristic if not trained
             avg_interval = input_vector[0] if len(input_vector) > 0 else 100
-            pause_count = input_vector[1] if len(input_vector) > 1 else 5
+            pause_count = input_vector[2] if len(input_vector) > 2 else 5
             # Simple check: human if interval > 80ms and pauses < 10
             return avg_interval > 80 and pause_count < 10
         prediction = self.model.predict([input_vector])
@@ -31,7 +31,12 @@ class Verifier:
 if __name__ == "__main__":
     import json
     import sys
-    vector = json.loads(sys.argv[1])
+    if len(sys.argv) > 1:
+        # Legacy: from arg
+        vector = json.loads(sys.argv[1])
+    else:
+        # From stdin
+        vector = json.loads(sys.stdin.read())
     v = Verifier()
     result = v.verify(vector)
     print("Human" if result else "AI")
