@@ -1,5 +1,7 @@
 import { execSync } from 'child_process';
 
+const pythonCmd = process.env.CI ? 'python3' : './venv/bin/python3';
+
 describe('Model Integration', () => {
   it('should encode stats using Python encoder', () => {
     const stats = {
@@ -9,7 +11,7 @@ describe('Model Integration', () => {
       rhythmVector: [0, 1, 0, 0, 0]
     };
     const statsJson = JSON.stringify(stats);
-    const result = execSync(`./venv/bin/python3 core/model/organic-encoder.py`, {
+    const result = execSync(`${pythonCmd} core/model/organic-encoder.py`, {
       input: statsJson,
       encoding: 'utf-8'
     }).toString().trim();
@@ -21,7 +23,7 @@ describe('Model Integration', () => {
   it('should verify vector using Python verifier', () => {
     const vector = [100, 10, 0, 0, 1, 0, 0, 0];
     const vectorJson = JSON.stringify(vector);
-    const result = execSync(`./venv/bin/python3 core/model/verifier.py`, {
+    const result = execSync(`${pythonCmd} core/model/verifier.py`, {
       input: vectorJson,
       encoding: 'utf-8'
     }).toString().trim();
