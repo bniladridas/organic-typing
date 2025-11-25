@@ -50,8 +50,52 @@ program.command('verify')
       const normalized = normalizeKeystrokes(data);
       const stats = calculateStats(normalized);
       console.log(`Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`);
-      // TODO: call verifier model
-      console.log('Verification: Human-like (placeholder)');
+      // Encode stats to vector
+      const encoder = spawn('python3', ['core/model/organic-encoder.py'], {
+        stdio: ['pipe', 'pipe', 'pipe']
+      });
+      const statsJson = JSON.stringify(stats);
+      encoder.stdin.write(statsJson);
+      encoder.stdin.end();
+      let vectorOutput = '';
+      encoder.stdout.on('data', (data) => {
+        vectorOutput += data.toString();
+      });
+      encoder.stderr.on('data', (data) => {
+        console.error('Encoder error:', data.toString());
+      });
+      encoder.on('close', (code) => {
+        if (code === 0) {
+          try {
+            const vector = JSON.parse(vectorOutput.trim());
+            // Now verify
+            const verifier = spawn('python3', ['core/model/verifier.py'], {
+              stdio: ['pipe', 'pipe', 'pipe']
+            });
+            verifier.stdin.write(JSON.stringify(vector));
+            verifier.stdin.end();
+            let verifyOutput = '';
+            verifier.stdout.on('data', (data) => {
+              verifyOutput += data.toString();
+            });
+            verifier.stderr.on('data', (data) => {
+              console.error('Verifier error:', data.toString());
+            });
+            verifier.on('close', (vcode) => {
+              if (vcode === 0) {
+                console.log(`Verification: ${verifyOutput.trim()}`);
+              } else {
+                console.log('Verification: Error');
+              }
+            });
+          } catch (e) {
+            console.error('Error parsing vector:', e);
+            console.log('Verification: Error');
+          }
+        } else {
+          console.log('Verification: Error');
+        }
+      });
     } catch (err) {
       console.error('Error reading file:', (err as Error).message);
     }
