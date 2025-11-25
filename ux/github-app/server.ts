@@ -62,9 +62,9 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
   const pauseCount = stats.pauseCount;
   const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
 
-   // Update signature atomically
-   const userLogin = pr.user.login;
-   await kv.hset('signatures', { [userLogin]: stats });
+  // Update signature atomically
+  const userLogin = pr.user.login;
+  await kv.hset('signatures', { [userLogin]: stats });
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
   const commentBody = isUpdate
@@ -90,6 +90,10 @@ app.use('/webhook', createNodeMiddleware(webhooks, { path: '/webhook' }));
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Organic Typing GitHub App');
+});
+
+app.get('/favicon.ico', (req: Request, res: Response) => {
+  res.status(204).end(); // No content for favicon
 });
 
 // For Vercel serverless
