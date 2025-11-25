@@ -42,42 +42,14 @@ function textToKeystrokes(text: string | null): Keystroke[] {
 
 
 
-const webhooks = new Webhooks({
-  secret: process.env.WEBHOOK_SECRET || 'development',
-});
-
-webhooks.on('pull_request.opened', async (event) => {
-  const octokit = await githubApp.getInstallationOctokit((event.payload.installation as { id: number }).id);
-  const pr = event.payload.pull_request as PR;
-  const body = pr.body;
-
-   const keystrokes = textToKeystrokes(body);
-  const normalized = normalizeKeystrokes(keystrokes);
-  const stats = calculateStats(normalized);
-
-  // Call verifier (simple heuristic)
-  const avgInterval = stats.averageInterval;
-  const pauseCount = stats.pauseCount;
-  const verification = avgInterval > 80 && pauseCount < 10 ? 'Human' : 'AI';
-
-  // Update signature
-  const signatures: Record<string, TypingStats> = await kv.get('signatures') || {};
-  const userLogin = pr.user.login;
-  const number = pr.number;
-  signatures[userLogin] = stats;
-  await kv.set('signatures', signatures);
-
-  const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-  await (octokit as Octokit).issues.createComment({
-    owner: event.payload.repository.owner.login,
-    repo: event.payload.repository.name,
-    issue_number: number,
-    body: `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${userLogin}.`
-  });
-});
-
-webhooks.on('pull_request.edited', async (event) => {
-  const octokit = await githubApp.getInstallationOctokit((event.payload.installation as { id: number }).id);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handlePullRequest(event: any, isUpdate: boolean) {
+  const installationId = event.payload.installation?.id;
+  if (!installationId) {
+    console.error('Installation ID not found in webhook payload.');
+    return;
+  }
+  const octokit = await githubApp.getInstallationOctokit(installationId);
   const pr = event.payload.pull_request as PR;
   const body = pr.body;
 
@@ -93,18 +65,28 @@ webhooks.on('pull_request.edited', async (event) => {
   // Update signature
   const signatures: Record<string, TypingStats> = await kv.get('signatures') || {};
   const userLogin = pr.user.login;
-  const number = pr.number;
   signatures[userLogin] = stats;
   await kv.set('signatures', signatures);
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
+  const commentBody = isUpdate
+    ? `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${userLogin}.`
+    : `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${userLogin}.`;
+
   await (octokit as Octokit).issues.createComment({
     owner: event.payload.repository.owner.login,
     repo: event.payload.repository.name,
-    issue_number: number,
-    body: `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${userLogin}.`
+    issue_number: pr.number,
+    body: commentBody,
   });
+}
+
+const webhooks = new Webhooks({
+  secret: process.env.WEBHOOK_SECRET || 'development',
 });
+
+webhooks.on('pull_request.opened', (event) => handlePullRequest(event, false));
+webhooks.on('pull_request.edited', (event) => handlePullRequest(event, true));
 
 app.use('/webhook', createNodeMiddleware(webhooks, { path: '/webhook' }));
 
