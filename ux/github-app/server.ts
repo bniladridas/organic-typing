@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
 import express from 'express';
 import { Request, Response } from 'express';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
 export interface Keystroke {
   key: string;
   timestamp: number;

@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: BSD-3-Clause
 import { execSync } from 'child_process';
 
-const pythonCmd = process.env.CI ? 'python3' : './venv/bin/python3';
+const pythonCmd = 'python3';
 
 describe('Model Integration', () => {
   it('should encode stats using Python encoder', () => {

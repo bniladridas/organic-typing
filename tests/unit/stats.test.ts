@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
 import { calculateStats } from '../../core/processor/stats';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
 import { Keystroke } from '../../core/collector/keylogger';

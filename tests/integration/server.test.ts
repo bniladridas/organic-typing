@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: BSD-3-Clause
 import request from 'supertest';
 import { Application } from 'express';
 
