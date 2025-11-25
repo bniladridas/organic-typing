@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { Application } from 'express';
 
 describe('Server Endpoints', () => {
   beforeAll(() => {
@@ -7,7 +8,7 @@ describe('Server Endpoints', () => {
     process.env.WEBHOOK_SECRET = 'dummy';
   });
 
-  let app: any;
+  let app: Application;
   beforeAll(async () => {
     app = (await import('../../ux/github-app/server')).default;
   });
