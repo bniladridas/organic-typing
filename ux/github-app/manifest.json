@@ -1,10 +1,10 @@
 {
   "name": "Organic Typing Verifier",
-  "url": "http://localhost:3000",
+  "url": "https://organic-typing.vercel.app",
   "hook_attributes": {
-    "url": "http://localhost:3000/webhook"
+    "url": "https://organic-typing.vercel.app/webhook"
   },
-  "redirect_url": "http://localhost:3000/setup",
+  "redirect_url": "https://organic-typing.vercel.app/setup",
   "public": false,
   "default_permissions": {
     "pull_requests": "read",

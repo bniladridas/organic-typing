@@ -20,8 +20,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const githubApp = new App({
-  appId: process.env.GITHUB_APP_ID!,
-  privateKey: process.env.GITHUB_PRIVATE_KEY!,
+  appId: process.env.GITHUB_APP_ID as string,
+  privateKey: process.env.GITHUB_PRIVATE_KEY as string,
 });
 const signaturesPath = path.join(__dirname, 'signatures.json');
 
@@ -42,7 +42,7 @@ const webhooks = new Webhooks({
 });
 
 webhooks.on('pull_request.opened', async (event) => {
-  const octokit = await githubApp.getInstallationOctokit(event.payload.installation!.id);
+  const octokit = await githubApp.getInstallationOctokit((event.payload.installation as { id: number }).id);
   const pr = event.payload.pull_request as PR;
   const body = pr.body;
 
@@ -66,7 +66,7 @@ webhooks.on('pull_request.opened', async (event) => {
   fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-  await (octokit as any).issues.createComment({
+  await (octokit as Octokit).issues.createComment({
     owner: event.payload.repository.owner.login,
     repo: event.payload.repository.name,
     issue_number: number,
@@ -75,7 +75,7 @@ webhooks.on('pull_request.opened', async (event) => {
 });
 
 webhooks.on('pull_request.edited', async (event) => {
-  const octokit = await githubApp.getInstallationOctokit(event.payload.installation!.id);
+  const octokit = await githubApp.getInstallationOctokit((event.payload.installation as { id: number }).id);
   const pr = event.payload.pull_request as PR;
   const body = pr.body;
 
@@ -99,7 +99,7 @@ webhooks.on('pull_request.edited', async (event) => {
   fs.writeFileSync(signaturesPath, JSON.stringify(signatures, null, 2));
 
   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-  await (octokit as any).issues.createComment({
+  await (octokit as Octokit).issues.createComment({
     owner: event.payload.repository.owner.login,
     repo: event.payload.repository.name,
     issue_number: number,
