@@ -12,6 +12,8 @@ The core system now captures keystrokes from terminal and system-wide on Ubuntu.
 
 A recent addition enables system-wide capture on Ubuntu, accessing raw input events to record every keystroke across applications. This enhances data collection beyond terminal boundaries, providing richer organic signatures.
 
+Go implementation added for Linux keylogger, providing an alternative to the TypeScript version with similar functionality.
+
 In Progress
 
 Testing infrastructure solidifies with unit and integration tests. CI/CD ensures reliability across environments, with platform-specific handling for Linux features.
