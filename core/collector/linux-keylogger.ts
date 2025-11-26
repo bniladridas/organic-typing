@@ -37,6 +37,11 @@ class LinuxKeylogger {
   private keystrokes: Keystroke[] = [];
   private reader?: EvdevReader;
   private device?: EvdevDevice;
+  private sensitiveMode = false;
+
+  setSensitiveMode(sensitive: boolean) {
+    this.sensitiveMode = sensitive;
+  }
 
   async start() {
     // Find keyboard device
@@ -48,6 +53,10 @@ class LinuxKeylogger {
 
     this.reader = new evdev.Reader(this.device);
     this.reader.on('event', (event: EvdevEvent) => {
+      if (this.sensitiveMode) {
+        // Skip logging all keystrokes in sensitive mode to prevent capturing passwords
+        return;
+      }
       if (event.type === EV_KEY) {
         const keyName = KEY[event.code];
         if (keyName) {
@@ -68,6 +77,7 @@ class LinuxKeylogger {
     if (this.reader) {
       this.reader.close();
     }
+    this.sensitiveMode = false; // Reset sensitive mode on stop
   }
 
   getKeystrokes(): Keystroke[] {

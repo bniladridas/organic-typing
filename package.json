@@ -59,6 +59,7 @@
   "author": "",
   "license": "BSD-3-Clause",
   "jest": {
-    "preset": "ts-jest"
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   }
 }

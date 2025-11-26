@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
-export function isSensitiveInput(el: any): boolean {
+interface DOMElement {
+  tagName?: string | null;
+  type?: string;
+  hasAttribute?: (attr: string) => boolean;
+}
+
+export function isSensitiveInput(el: DOMElement | null | undefined): boolean {
   if (!el) return false;
   try {
     const tag = (el.tagName || '').toLowerCase();
