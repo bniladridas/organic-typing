@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: BSD-3-Clause
+# Release workflow for automated tagging and releasing on PR merge
+name: Release
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Configure git
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+    - name: Get version
+      run: |
+        version=$(cat VERSION)
+        echo "VERSION=$version" >> $GITHUB_ENV
+        echo "TAG=v$version" >> $GITHUB_ENV
+    - name: Push tag
+      run: |
+        git tag ${{ env.TAG }}
+        git push origin ${{ env.TAG }}
+    - name: Create release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.TAG }}
+        release_name: ${{ github.event.pull_request.title }}
+        body: ${{ github.event.pull_request.body }}
+        draft: false
+        prerelease: false
