@@ -24,6 +24,7 @@
     "@vercel/kv": "^3.0.0",
     "commander": "^14.0.2",
     "cors": "^2.8.5",
+    "escape-html": "^1.0.3",
     "express": "^5.1.0",
     "express-rate-limit": "^7.5.1"
   },
@@ -34,6 +35,7 @@
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@types/cors": "^2.8.19",
+    "@types/escape-html": "^1.0.4",
     "@types/express": "^4.17.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^18.0.0",

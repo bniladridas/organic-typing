@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 import express from 'express';
 import { Request, Response } from 'express';
+import escape from 'escape-html';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
@@ -147,7 +148,7 @@ app.delete('/delete/:user', async (req: Request, res: Response) => {
   try {
     await kv.hdel('signatures', user);
     await kv.hdel('consent', user);
-    res.send(`Data for user ${user} deleted.`);
+    res.send(`Data for user ${escape(user)} deleted.`);
   } catch (error) {
     res.status(500).send('Error deleting data.');
   }
