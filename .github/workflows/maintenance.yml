@@ -3,6 +3,10 @@
 # Maintenance workflow for automated checks, security analysis, and version management
 # Runs on pushes, PRs, weekly, or manually to ensure code health and updates
 name: Maintenance
+permissions:
+  contents: write  # For pushing commits and creating branches
+  security-events: write  # For CodeQL to upload results
+  pull-requests: write  # For creating PRs
 on:
   push:
     branches: [main]
