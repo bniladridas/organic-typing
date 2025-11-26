@@ -2,14 +2,15 @@
 extends: default
 
 ignore:
-- node_modules
-- .pre-commit-config.yaml
-- .github/dependabot.yml
+  - node_modules
+  - .pre-commit-config.yaml
+  - .github/dependabot.yml
+  - .github/workflows/*.yml
 
 rules:
   indentation:
     spaces: 2
-    indent-sequences: false
+    indent-sequences: true
   truthy: disable
   line-length:
     max: 120
