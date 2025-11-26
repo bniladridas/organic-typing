@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 import express from 'express';
 import { Request, Response } from 'express';
+import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
 import { Octokit } from '@octokit/rest';
 import { App } from '@octokit/app';
@@ -19,6 +21,18 @@ type PR = {
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Rate limiting for webhook endpoint
+const webhookLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+});
+
+app.use('/webhook', webhookLimiter);
+
+// CORS for API endpoints
+app.use('/api', cors({ origin: ['https://github.com'] }));
 
 const appId = process.env.GITHUB_APP_ID;
 const privateKey = process.env.GITHUB_PRIVATE_KEY;
@@ -109,6 +123,34 @@ app.get('/favicon.ico', (req: Request, res: Response) => {
 
 app.get('/favicon.png', (req: Request, res: Response) => {
   res.status(204).end(); // No content for favicon
+});
+
+// Endpoint for consent
+app.post('/consent', async (req: Request, res: Response) => {
+  const { userId, consent } = req.body;
+  // store one-line consent record: { userId, consent, ts }
+  await kv.hset('consent', { [userId]: { consent, ts: Date.now() } });
+  res.sendStatus(204);
+});
+
+// Endpoint for data export
+app.post('/export', async (req: Request, res: Response) => {
+  const { userId } = req.body;
+  // return aggregated vectors only
+  const vectors = await kv.hget('signatures', userId);
+  res.json({ exportedAt: Date.now(), vectors });
+});
+
+// Endpoint for data deletion
+app.delete('/delete/:user', async (req: Request, res: Response) => {
+  const user = req.params.user;
+  try {
+    await kv.hdel('signatures', user);
+    await kv.hdel('consent', user);
+    res.send(`Data for user ${user} deleted.`);
+  } catch (error) {
+    res.status(500).send('Error deleting data.');
+  }
 });
 
 // For Vercel serverless

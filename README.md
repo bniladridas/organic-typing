@@ -6,6 +6,10 @@ Recommendation
 
 Capture fine-grained typing signals and preserve them as part of the writing profile.
 
+## Privacy and Security
+
+This project collects anonymized keystroke timing data for research purposes. See [PRIVACY.md](PRIVACY.md) for details on data handling, consent, and deletion rights. We prioritize user privacy by not storing raw keystroke sequences and providing opt-out mechanisms.
+
 Example
 
 In this example, the collector records each keypress with timing information. The raw data includes pauses, bursts of rapid typing, and small corrections. Normalizing these signals produces a rhythm vector that reflects the writer’s natural flow.

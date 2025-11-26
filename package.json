@@ -13,7 +13,8 @@
     "test:integration": "jest tests/integration",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "check": "npm run lint && npm run build && npm run test",
+    "audit": "npm audit",
+    "check": "npm run lint && npm run build && npm run test && npm run audit",
     "prepare": "husky install"
   },
   "dependencies": {
@@ -22,7 +23,9 @@
     "@octokit/webhooks": "^12.0.0",
     "@vercel/kv": "^3.0.0",
     "commander": "^10.0.0",
-    "express": "^5.1.0"
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1"
   },
   "optionalDependencies": {
     "evdev": "^0.3.0"
@@ -30,6 +33,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^4.17.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^18.0.0",
