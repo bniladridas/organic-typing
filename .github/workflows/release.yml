@@ -20,9 +20,9 @@ jobs:
         git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
     - name: Get version
       run: |
-        version=$(cat VERSION)
-        echo "VERSION=$version" >> $GITHUB_ENV
-        echo "TAG=v$version" >> $GITHUB_ENV
+        version="$(cat VERSION)"
+        echo "VERSION=${version}" >> "$GITHUB_ENV"
+        echo "TAG=v${version}" >> "$GITHUB_ENV"
     - name: Push tag
       run: |
         git tag ${{ env.TAG }}
