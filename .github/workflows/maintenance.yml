@@ -72,6 +72,8 @@ jobs:
       run: git tag -l | tail -10
     - name: Calculate and apply version bump
       run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
         latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
         echo "Latest tag: $latest_tag"
         # Simple semver bump logic (patch)
