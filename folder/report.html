@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Typing Code Quality</title>
+    <style>
+        :root {
+            --bg-color: #fff;
+            --text-color: #333;
+            --heading-color: #000;
+            --border-color: #eee;
+            --code-bg: #f8f9fa;
+            --pass-color: #28a745;
+            --warn-color: #ffc107;
+            --fail-color: #dc3545;
+            --brand-color: #2e8b57; /* Sea green for organic */
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1a1a1a;
+                --text-color: #ccc;
+                --heading-color: #fff;
+                --border-color: #333;
+                --code-bg: #2a2a2a;
+            }
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--brand-color);
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--heading-color);
+        }
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 300;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--heading-color);
+        }
+        p {
+            margin-bottom: 1rem;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .metric:last-child {
+            border-bottom: none;
+        }
+        .status {
+            font-weight: 500;
+        }
+
+        .pass { color: var(--pass-color); }
+        .warn { color: var(--warn-color); }
+        .fail { color: var(--fail-color); }
+        code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+        .keyword { color: #0000ff; font-weight: bold; }
+        .string { color: #008000; }
+        .comment { color: #808080; font-style: italic; }
+        .number { color: #ff6600; }
+        .function { color: #795e26; }
+        .variable { color: #001080; }
+        .bee {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+        .bee:hover {
+            transform: translateX(10px);
+        }
+
+        .diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            margin: 0 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .arrow {
+            font-size: 1.2em;
+            margin: 0 0.5rem;
+        }
+        @media print {
+            body {
+                padding: 0;
+                max-width: none;
+            }
+            .metric {
+                page-break-inside: avoid;
+            }
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1><span class="bee">🐝</span> Organic Typing Code Quality Report</h1>
+    <div style="text-align: right; font-size: 0.8em; margin-bottom: 1rem;">
+        <a href="https://github.com/bniladridas/organic-typing/edit/main/folder/report.html" style="color: var(--brand-color); text-decoration: none;">Edit</a>
+    </div>
+    <p>This report evaluates the code quality of the Organic Typing project. It captures human typing signals for research purposes. The system records keystroke timing, processes rhythms, and builds signatures to distinguish authentic human writing from automated text.</p>
+
+    <h2 id="keystroke">Keystroke Dynamics</h2>
+    <p>Keystroke dynamics measure the timing between key presses and releases, capturing individual typing patterns. Pauses before keys, hold times, and inter-key intervals form unique signatures that vary with thought processes and habits.</p>
+
+    <h2>Data Privacy</h2>
+    <p>The project handles highly sensitive keystroke data. All data is anonymized, encrypted at rest, and processed with strict privacy controls. User consent is required, and deletion requests are honored promptly.</p>
+
+    <h2 id="metrics">Quality Metrics</h2>
+    <div class="metric">
+        <span>Linting</span>
+        <span class="status pass">Pass</span>
+    </div>
+    <p>ESLint checks for code style and potential errors, ensuring consistent, error-free code.</p>
+    <div class="metric">
+        <span>Tests</span>
+        <span class="status pass">66 passed, 2 skipped</span>
+    </div>
+    <p>Jest runs unit and integration tests, verifying functionality across components. Skipped tests are platform-specific for Linux keylogger features.</p>
+    <div class="metric">
+        <span>Security Audit</span>
+        <span class="status pass">0 vulnerabilities</span>
+    </div>
+    <p>npm audit scans dependencies for known security issues.</p>
+    <div class="metric">
+        <span>TypeScript Compilation</span>
+        <span class="status pass">Success</span>
+    </div>
+    <p>TypeScript compiler ensures type safety, preventing runtime errors.</p>
+
+    <h2 id="architecture">Architecture Overview</h2>
+    <p>The codebase is structured into modular components that handle data collection, processing, and modeling. Each component maintains clear responsibilities, ensuring coherent data flow from raw keystrokes to encoded signatures.</p>
+
+    <h3>Components</h3>
+    <ul>
+        <li><strong>Collector:</strong> Records timing information and key events.</li>
+        <li><strong>Processor:</strong> Transforms raw data into intervals, rhythms, and features.</li>
+        <li><strong>Model:</strong> Encodes vectors, generates text, and verifies patterns.</li>
+        <li><strong>CLI:</strong> Provides interface for data collection and commands.</li>
+    </ul>
+
+    <h3>Model Details</h3>
+    <p>The Python model uses scikit-learn for encoding and verification. Encoder standardizes stats into vectors while verifier employs RandomForest classifier to distinguish human from AI text.</p>
+
+    <h3>Data Flow Diagram</h3>
+    <div class="diagram">
+        <div class="box">Keystrokes</div>
+        <span class="arrow">→</span>
+        <div class="box">Normalize</div>
+        <span class="arrow">→</span>
+        <div class="box">Stats</div>
+        <span class="arrow">→</span>
+        <div class="box">Encode</div>
+        <span class="arrow">→</span>
+        <div class="box">Vector</div>
+    </div>
+    <div class="diagram">
+        <div class="box">Stats</div>
+        <span class="arrow">↓</span>
+        <div class="box">Verify</div>
+        <span class="arrow">→</span>
+        <div class="box">Human/AI</div>
+    </div>
+
+    <h3>Data Flow</h3>
+    <ol>
+        <li>Keystrokes collected with timestamps.</li>
+        <li>Processor computes intervals and rhythm vectors.</li>
+        <li>Model encodes into signature.</li>
+        <li>Signature used for generation or verification.</li>
+    </ol>
+
+    <h2>Code Example</h2>
+    <p>A typical event structure captures key timing data:</p>
+    <pre><code><span class="keyword">const</span> event = {
+  key: <span class="string">"t"</span>,
+  down: <span class="number">1052</span>,
+  up: <span class="number">1120</span>,
+  pauseBefore: <span class="number">320</span>
+};</code></pre>
+
+    <h2 id="standards">Project Standards</h2>
+    <p>The codebase adheres to modern development practices with TypeScript for type safety, ESLint for code consistency, Jest for testing, and Husky for commit hooks. Dependencies are audited regularly and the project follows conventional commit standards.</p>
+
+    <h2>Key Libraries</h2>
+    <ul>
+        <li><strong>Express:</strong> Web framework for server and API.</li>
+        <li><strong>@octokit:</strong> GitHub API client for app integration.</li>
+        <li><strong>Jest:</strong> Testing framework for unit and integration tests.</li>
+        <li><strong>scikit-learn:</strong> Machine learning for model encoding and verification.</li>
+    </ul>
+
+    <h2>Continuous Integration</h2>
+    <p>GitHub Actions CI runs on every push and pull request to main. It performs linting, builds, unit and integration tests, dependency audits, and Docker image testing on Ubuntu.</p>
+
+    <h2>Codebase Structure</h2>
+    <div style="font-family: monospace; background: var(--code-bg); padding: 1rem; border-radius: 3px;">
+        organic-typing/<br>
+        ├── core/ (collector, processor, model)<br>
+        ├── ux/ (cli, github-app)<br>
+        ├── go/ (keylogger)<br>
+        ├── tests/ (unit, integration)<br>
+        └── docs/ (architecture, overview)
+    </div>
+
+    <h2 id="webhook">Webhook Integration</h2>
+    <p>The GitHub app integrates via webhooks, listening for pull request events. When a PR is opened or edited, it processes the body text into simulated keystrokes, normalizes them, calculates stats, encodes with the model, and verifies authenticity. Signatures are stored encrypted and analysis is posted as comments.</p>
+
+    <h3>Webhook Event Handling</h3>
+    <p>Sample webhook event for PR opened.</p>
+    <pre><code>webhooks.on(<span class="string">'pull_request.opened'</span>, (event) => {
+  <span class="comment">// Process PR body into keystrokes</span>
+  <span class="keyword">const</span> keystrokes = textToKeystrokes(event.payload.pull_request.body);
+  <span class="comment">// Normalize and analyze</span>
+  <span class="keyword">const</span> normalized = normalizeKeystrokes(keystrokes);
+  <span class="keyword">const</span> stats = calculateStats(normalized);
+  <span class="comment">// Encode and verify</span>
+  <span class="keyword">const</span> encodedVector = execSync(<span class="string">'python3 core/model/organic-encoder.py'</span>);
+  <span class="keyword">const</span> verification = execSync(<span class="string">'python3 core/model/verifier.py'</span>);
+  <span class="comment">// Store and comment</span>
+});</code></pre>
+
+    <h3>Endpoints</h3>
+    <ul>
+        <li><strong>Webhook:</strong> Handles PR events with rate limiting.</li>
+        <li><strong>API Consent:</strong> Manages user consent for data collection.</li>
+        <li><strong>API Export:</strong> Allows authenticated export of aggregated vectors.</li>
+        <li><strong>API Delete:</strong> Enables data deletion with audit logging.</li>
+    </ul>
+
+    <h3>API Example</h3>
+    <p>Consent endpoint request.</p>
+    <pre><code>POST /api/consent
+{
+  <span class="string">"userId"</span>: <span class="string">"exampleUser"</span>,
+  <span class="string">"consent"</span>: <span class="keyword">true</span>
+}</code></pre>
+
+    <footer style="margin-top: 2rem; font-size: 0.8em; color: var(--text-color); opacity: 0.7; text-align: center;">
+        <a href="https://github.com/bniladridas/organic-typing" style="color: var(--brand-color); text-decoration: none;">Repo</a> |
+        <a href="https://github.com/bniladridas/organic-typing/actions" style="color: var(--brand-color); text-decoration: none;">Actions</a> |
+        <a href="https://github.com/bniladridas/organic-typing/pulls" style="color: var(--brand-color); text-decoration: none;">Pulls</a> |
+        <a href="https://github.com/bniladridas/organic-typing/security" style="color: var(--brand-color); text-decoration: none;">Security</a>
+    </footer>
+</body>
+</html>
