@@ -17,17 +17,18 @@ class Keylogger {
   start() {
     process.stdin.setRawMode(true);
     process.stdin.on('data', (data) => {
-      const key = data.toString();
-      if (this.sensitiveMode && key.length > 1) {
-        // Skip logging multi-char inputs or passwords
+      if (this.sensitiveMode) {
+        // Skip logging all keystrokes in sensitive mode to prevent capturing passwords
         return;
       }
+      const key = data.toString();
       this.keystrokes.push({ key, timestamp: Date.now(), type: 'press', sensitive: this.sensitiveMode });
     });
   }
 
   stop() {
     process.stdin.setRawMode(false);
+    this.sensitiveMode = false; // Reset sensitive mode on stop
   }
 
   getKeystrokes(): Keystroke[] {
