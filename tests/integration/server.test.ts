@@ -7,6 +7,9 @@ describe('Server Endpoints', () => {
     process.env.GITHUB_APP_ID = '12345';
     process.env.GITHUB_PRIVATE_KEY = 'dummy';
     process.env.WEBHOOK_SECRET = 'dummy';
+    process.env.ENCRYPTION_KEY = 'dummy-encryption-key';
+    process.env.ENCRYPTION_SALT = 'dummy-salt';
+    process.env.API_SECRET = 'dummy-api-secret';
   });
 
   let app: Application;

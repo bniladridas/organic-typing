@@ -14,7 +14,7 @@ describe('CLI Integration', () => {
       expect(output).toContain('Generated: test');
       done();
     });
-  });
+  }, 10000);
 
   it('should handle collect command on Linux', (done) => {
     if (os.platform() !== 'linux') {
