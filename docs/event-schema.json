@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Keystroke Event",
+  "type": "object",
+  "properties": {
+    "key": {
+      "type": "string",
+      "description": "The key pressed (anonymized, no sensitive content)"
+    },
+    "timestamp": {
+      "type": "number",
+      "description": "Timestamp in milliseconds"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["press", "release"],
+      "description": "Type of keystroke event"
+    },
+    "sensitive": {
+      "type": "boolean",
+      "description": "Flag indicating if the keystroke is from a sensitive context"
+    }
+  },
+  "required": ["key", "timestamp", "type"]
+}

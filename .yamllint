@@ -4,6 +4,7 @@ extends: default
 ignore:
 - node_modules
 - .pre-commit-config.yaml
+- .github/dependabot.yml
 
 rules:
   indentation:

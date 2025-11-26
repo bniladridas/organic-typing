@@ -3,16 +3,26 @@ export interface Keystroke {
   key: string;
   timestamp: number;
   type: 'press' | 'release';
+  sensitive?: boolean;
 }
 
 class Keylogger {
   private keystrokes: Keystroke[] = [];
+  private sensitiveMode = false;
+
+  setSensitiveMode(sensitive: boolean) {
+    this.sensitiveMode = sensitive;
+  }
 
   start() {
     process.stdin.setRawMode(true);
     process.stdin.on('data', (data) => {
       const key = data.toString();
-      this.keystrokes.push({ key, timestamp: Date.now(), type: 'press' });
+      if (this.sensitiveMode && key.length > 1) {
+        // Skip logging multi-char inputs or passwords
+        return;
+      }
+      this.keystrokes.push({ key, timestamp: Date.now(), type: 'press', sensitive: this.sensitiveMode });
     });
   }
 
