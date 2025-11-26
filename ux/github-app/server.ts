@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 import express, { NextFunction } from 'express';
 import { Request, Response } from 'express';
-import escape from 'escape-html';
+import escapeHtml from 'escape-html';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
@@ -146,12 +146,12 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
    const userLogin = pr.user.login;
    const encryptedStats = encrypt(JSON.stringify(stats));
    await kv.hset('signatures', { [userLogin]: encryptedStats });
-    console.log(`AUDIT: Signature updated for user ${escape(userLogin)} at ${new Date().toISOString()}`);
+    console.log(`AUDIT: Signature updated for user ${escapeHtml(userLogin)} at ${new Date().toISOString()}`);
 
    const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
    const commentBody = isUpdate
-     ? `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${escape(userLogin)}.`
-     : `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${escape(userLogin)}.`;
+     ? `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${escapeHtml(userLogin)}.`
+     : `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${escapeHtml(userLogin)}.`;
 
   await (octokit as Octokit).issues.createComment({
     owner: event.payload.repository.owner.login,
@@ -187,7 +187,7 @@ app.post('/api/consent', async (req: Request, res: Response) => {
   const { userId, consent } = req.body;
   // store one-line consent record: { userId, consent, ts }
   await kv.hset('consent', { [userId]: { consent, ts: Date.now() } });
-  console.log(`AUDIT: Consent updated for user ${escape(userId)} at ${new Date().toISOString()}`);
+  console.log(`AUDIT: Consent updated for user ${escapeHtml(userId)} at ${new Date().toISOString()}`);
   res.sendStatus(204);
 });
 
@@ -198,10 +198,10 @@ app.post('/api/export', requireAuth, async (req: Request, res: Response) => {
   const encryptedVectors = await kv.hget('signatures', userId);
   if (encryptedVectors) {
     const decryptedVectors = JSON.parse(decrypt(encryptedVectors as string));
-    console.log(`AUDIT: Data exported for user ${escape(userId)} at ${new Date().toISOString()}`);
+    console.log(`AUDIT: Data exported for user ${escapeHtml(userId)} at ${new Date().toISOString()}`);
     res.json({ exportedAt: Date.now(), vectors: decryptedVectors });
   } else {
-    console.log(`AUDIT: Export attempted for user ${escape(userId)} but no data found at ${new Date().toISOString()}`);
+    console.log(`AUDIT: Export attempted for user ${escapeHtml(userId)} but no data found at ${new Date().toISOString()}`);
     res.status(404).json({ error: 'No data found' });
   }
 });
@@ -212,10 +212,10 @@ app.delete('/api/delete/:user', requireAuth, async (req: Request, res: Response)
   try {
     await kv.hdel('signatures', user);
     await kv.hdel('consent', user);
-    console.log(`AUDIT: Data deleted for user ${escape(user)} at ${new Date().toISOString()}`);
-    res.send(`Data for user ${escape(user)} deleted.`);
+    console.log(`AUDIT: Data deleted for user ${escapeHtml(user)} at ${new Date().toISOString()}`);
+    res.send(`Data for user ${escapeHtml(user)} deleted.`);
   } catch (error) {
-    console.log(`AUDIT: Error deleting data for user ${escape(user)} at ${new Date().toISOString()}: ${error}`);
+    console.log(`AUDIT: Error deleting data for user ${escapeHtml(user)} at ${new Date().toISOString()}: ${error}`);
     res.status(500).send('Error deleting data.');
   }
 });
