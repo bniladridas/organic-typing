@@ -27,7 +27,8 @@ const port = process.env.PORT || 3000;
 // Encryption key for data at rest (use a secure password in ENCRYPTION_KEY and salt in ENCRYPTION_SALT)
 const encryptionKeyEnv = process.env.ENCRYPTION_KEY;
 if (!encryptionKeyEnv) throw new Error('ENCRYPTION_KEY environment variable must be set');
-const salt = process.env.ENCRYPTION_SALT || 'default-salt-change-in-prod';
+const salt = process.env.ENCRYPTION_SALT;
+if (!salt) throw new Error('ENCRYPTION_SALT environment variable must be set');
 const ENCRYPTION_KEY = crypto.scryptSync(encryptionKeyEnv, salt, 32);
 const ALGORITHM = 'aes-256-cbc';
 
