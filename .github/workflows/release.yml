@@ -24,7 +24,7 @@ jobs:
       run: |
         version="$(cat VERSION)"
         echo "VERSION=${version}" >> "$GITHUB_ENV"
-        echo "TAG=v${version}" >> "$GITHUB_ENV"
+        echo "TAG=${version}" >> "$GITHUB_ENV"
     - name: Push tag
       run: |
         git tag ${{ env.TAG }}
