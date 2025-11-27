@@ -21,7 +21,7 @@ interface Evdev {
   KEY: { [key: number]: string };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const evdev = require('evdev') as Evdev;
 
 const EV_KEY = evdev.EV_KEY;
