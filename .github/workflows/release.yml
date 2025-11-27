@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Release workflow for automated tagging and releasing on PR merge
 name: Release
+permissions:
+  contents: write
 on:
   pull_request:
     types: [closed]
