@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+
 
 class Verifier:
     def __init__(self):
@@ -12,7 +14,9 @@ class Verifier:
         # Train on labeled data
         X = np.vstack([human_vectors, ai_vectors])
         y = np.hstack([np.ones(len(human_vectors)), np.zeros(len(ai_vectors))])
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
         self.model.fit(X_train, y_train)
         self.is_trained = True
         accuracy = self.model.score(X_test, y_test)
@@ -29,9 +33,11 @@ class Verifier:
         prediction = self.model.predict([input_vector])
         return prediction[0] == 1  # 1 for human
 
+
 if __name__ == "__main__":
     import json
     import sys
+
     if len(sys.argv) > 1:
         # Legacy: from arg
         vector = json.loads(sys.argv[1])
