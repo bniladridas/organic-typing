@@ -37,7 +37,6 @@ program.command('generate')
   .action((prompt) => {
     console.log(`Generating text for: ${prompt}`);
     console.log(`Generated: ${prompt}`);
-    process.exit(0);
   });
 
 program.command('verify')
