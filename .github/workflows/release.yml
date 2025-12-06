@@ -38,7 +38,7 @@ jobs:
         git add VERSION
         git commit -m "chore: bump version to ${new_version}"
         git checkout -b version-bump-${new_version}
-        git push -u origin version-bump-${new_version}
+        git push -u origin version-bump-${new_version} --force
         echo "VERSION=${new_version}" >> "$GITHUB_ENV"
     - name: Create version bump PR
       uses: peter-evans/create-pull-request@v6
@@ -69,12 +69,10 @@ jobs:
         git tag ${{ env.TAG }}
         git push origin ${{ env.TAG }}
     - name: Create release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ env.TAG }}
-        release_name: ${{ github.event.pull_request.title }}
+        name: ${{ github.event.pull_request.title }}
         body: ${{ github.event.pull_request.body }}
         draft: false
         prerelease: false
