@@ -2,6 +2,14 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const { uIOhook, UiohookKey } = require('uiohook-napi');
 
+interface UiohookKeyboardEvent {
+  altKey: boolean;
+  ctrlKey: boolean;
+  metaKey: boolean;
+  shiftKey: boolean;
+  keycode: number;
+}
+
 export interface Keystroke {
   key: string;
   timestamp: number;
@@ -16,16 +24,19 @@ class MacKeylogger {
     this.sensitiveMode = sensitive;
   }
 
-  start() {
-    uIOhook.on('keydown', (e: { keycode: number }) => {
-      if (this.sensitiveMode) return;
-      const key = UiohookKey[e.keycode] || String.fromCharCode(e.keycode).toLowerCase();
-      this.keystrokes.push({ key, timestamp: Date.now(), type: 'press' });
+  private handleKeyEvent(type: 'press' | 'release', e: UiohookKeyboardEvent) {
+    if (this.sensitiveMode) return;
+    const key = UiohookKey[e.keycode];
+    if (!key) return; // Skip unmapped keys
+    this.keystrokes.push({ key: key.toLowerCase(), timestamp: Date.now(), type });
+  }
+
+  async start(): Promise<void> {
+    uIOhook.on('keydown', (e: UiohookKeyboardEvent) => {
+      this.handleKeyEvent('press', e);
     });
-    uIOhook.on('keyup', (e: { keycode: number }) => {
-      if (this.sensitiveMode) return;
-      const key = UiohookKey[e.keycode] || String.fromCharCode(e.keycode).toLowerCase();
-      this.keystrokes.push({ key, timestamp: Date.now(), type: 'release' });
+    uIOhook.on('keyup', (e: UiohookKeyboardEvent) => {
+      this.handleKeyEvent('release', e);
     });
     uIOhook.start();
   }
