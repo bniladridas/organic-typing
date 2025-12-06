@@ -12,11 +12,18 @@ interface LinuxKeyloggerType {
 }
 
 let LinuxKeylogger: (new () => LinuxKeyloggerType) | undefined;
+let MacKeylogger: (new () => LinuxKeyloggerType) | undefined;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
-} catch (e) {
+} catch {
   // evdev not available
+}
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+  MacKeylogger = require('../../core/collector/mac-keylogger').default;
+} catch {
+  // uiohook not available
 }
 
 const program = new Command();
@@ -102,15 +109,23 @@ program.command('verify')
   });
 
 program.command('collect')
-  .description('Collect keystroke data on Ubuntu (requires root/sudo)')
+  .description('Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)')
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
-    if (!LinuxKeylogger) {
-      console.error('Linux keylogger not available on this platform');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+    const os = require('os');
+    let LoggerClass: (new () => LinuxKeyloggerType) | undefined;
+    if (os.platform() === 'linux' && LinuxKeylogger) {
+      LoggerClass = LinuxKeylogger;
+    } else if (os.platform() === 'darwin' && MacKeylogger) {
+      LoggerClass = MacKeylogger;
+    }
+    if (!LoggerClass) {
+      console.error('Keylogger not available on this platform');
       process.exit(1);
     }
     console.log('Starting keystroke collection... Press Ctrl+C to stop.');
-    const logger = new LinuxKeylogger();
+    const logger = new LoggerClass();
     try {
       await logger.start();
       // Wait for user to stop, but since CLI, perhaps collect for 10 seconds

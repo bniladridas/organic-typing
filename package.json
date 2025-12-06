@@ -29,20 +29,22 @@
     "express-rate-limit": "^8.2.1"
   },
   "optionalDependencies": {
-    "evdev": "^0.3.0"
+    "evdev": "^0.3.0",
+    "uiohook-napi": "^1.5.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.1",
     "@types/cors": "^2.8.19",
     "@types/escape-html": "^1.0.4",
     "@types/express": "^5.0.5",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.57.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "supertest": "^7.1.4",

@@ -22,9 +22,9 @@ if (os.platform() === 'linux') {
     },
   }));
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   const mockEvdev = require('evdev');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   const LinuxKeyloggerClass = require('../../core/collector/linux-keylogger').default;
 
   describe('LinuxKeylogger', () => {
@@ -33,6 +33,10 @@ if (os.platform() === 'linux') {
     beforeEach(() => {
       logger = new LinuxKeyloggerClass();
       jest.clearAllMocks();
+    });
+
+    afterEach(() => {
+      logger.stop();
     });
 
     it('should start and find keyboard device', async () => {

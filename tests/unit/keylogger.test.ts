@@ -17,6 +17,10 @@ describe('Keylogger', () => {
     jest.clearAllMocks();
   });
 
+  afterEach(() => {
+    logger.stop();
+  });
+
   it('should start and listen for data events', () => {
     logger.start();
 
