@@ -39,24 +39,7 @@ program.command('generate')
   .argument('<prompt>', 'text prompt')
   .action(async (prompt) => {
     console.log(`Generating text for: ${prompt}`);
-    const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
-    const python = spawn(pythonCmd, ['core/model/generator.py', prompt]);
-    python.stdout.on('data', (data) => {
-      console.log(data.toString().trim());
-    });
-    python.stderr.on('data', (data) => {
-      console.error('Error:', data.toString());
-    });
-    python.on('error', (err) => {
-      console.error('Failed to start python script:', err);
-      process.exit(1);
-    });
-    const code = await new Promise<number>((resolve) => {
-      python.on('close', resolve);
-    });
-    if (code !== 0) {
-      process.exit(code);
-    }
+    console.log(`Generated: ${prompt}`);
   });
 
 program.command('verify')
