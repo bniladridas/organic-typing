@@ -14,11 +14,16 @@ class Generator:
 
 
 if __name__ == "__main__":
+    print("Script started")
+    sys.stdout.flush()
     if len(sys.argv) > 1:
         prompt = sys.argv[1]
+        print("Prompt:", repr(prompt))
+        sys.stdout.flush()
         gen = Generator(None)
         try:
-            print(gen.generate_text(prompt, None))
+            result = gen.generate_text(prompt, None)
+            print(result)
             sys.stdout.flush()
         except Exception as e:
             print("Error:", e)
@@ -26,3 +31,4 @@ if __name__ == "__main__":
             sys.exit(1)
     else:
         print("Usage: python generator.py <prompt>")
+    sys.stdout.flush()
