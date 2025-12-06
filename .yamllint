@@ -5,6 +5,7 @@ ignore:
   - node_modules
   - .pre-commit-config.yaml
   - .github/dependabot.yml
+  - .github/labeler.yml
   - .github/workflows/*.yml
 
 rules:
