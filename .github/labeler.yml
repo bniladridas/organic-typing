@@ -1,0 +1,49 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+# Labeler configuration for automatic PR labeling based on changed files
+
+# Core/backend changes
+backend:
+  - core/**
+
+# CLI/UX changes
+frontend:
+  - ux/**
+
+# Documentation changes
+documentation:
+  - docs/**
+  - README.md
+  - CONTRIBUTING.md
+  - SECURITY.md
+  - PRIVACY.md
+
+# CI/CD changes
+ci:
+  - .github/**
+  - Dockerfile
+  - docker-compose.yml
+  - flake.nix
+
+# Testing changes
+testing:
+  - tests/**
+
+# Model/AI changes
+ai:
+  - core/model/**
+
+# Dependencies
+dependencies:
+  - package.json
+  - package-lock.json
+  - requirements.txt
+
+# Configuration
+config:
+  - tsconfig.json
+  - .eslint*
+  - .prettierrc
+  - .yamllint
+  - .gitignore
+  - VERSION
