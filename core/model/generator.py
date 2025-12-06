@@ -20,8 +20,10 @@ if __name__ == "__main__":
         gen = Generator(None)
         try:
             print(gen.generate_text(prompt, None))
+            sys.stdout.flush()
         except Exception as e:
             print("Error:", e)
+            sys.stdout.flush()
             sys.exit(1)
     else:
         print("Usage: python generator.py <prompt>")
