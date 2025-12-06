@@ -7,7 +7,8 @@ increment_version() {
     IFS='.' read -r major minor patch <<< "$last_tag"
     # Validate version components are numbers
     if ! [[ "$major" =~ ^[0-9]+$ ]] || ! [[ "$minor" =~ ^[0-9]+$ ]] || ! [[ "$patch" =~ ^[0-9]+$ ]]; then
-        echo "0.1.4"
+        echo "Error: Invalid version format: '$last_tag'" >&2
+        return 1
     else
         local new_patch=$((patch + 1))
         echo "${major}.${minor}.${new_patch}"
