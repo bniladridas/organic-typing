@@ -35,7 +35,7 @@ jobs:
     - name: Run unit tests
       run: npm run test:unit
     - name: Run integration tests
-      run: npm run test:integration
+      run: npm run test:integration -- --runInBand
     - name: Build Docker image
       if: runner.os == 'Linux'
       run: docker build -t organic-typing .
