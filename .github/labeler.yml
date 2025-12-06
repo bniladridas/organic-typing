@@ -20,7 +20,7 @@ documentation:
 
 # CI/CD changes
 ci:
-  - .github/**
+  - .github/workflows/**
   - Dockerfile
   - docker-compose.yml
   - flake.nix
@@ -37,7 +37,7 @@ ai:
 dependencies:
   - package.json
   - package-lock.json
-  - requirements.txt
+  - core/model/requirements.txt
 
 # Configuration
 config:
@@ -47,3 +47,4 @@ config:
   - .yamllint
   - .gitignore
   - VERSION
+  - .github/labeler.yml
