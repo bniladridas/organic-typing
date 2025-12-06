@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
+// eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars
 import { Command } from 'commander';
 import { spawn } from 'child_process';
 import type { Keystroke } from '../../core/collector/keylogger';
@@ -45,8 +46,11 @@ program.command('verify')
   .action(async (file) => {
     console.log(`Verifying signature from: ${file}`);
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fs = require('fs');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { normalizeKeystrokes } = require('../../core/processor/normalize');
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { calculateStats } = require('../../core/processor/stats');
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
       const normalized = normalizeKeystrokes(data);
@@ -109,9 +113,10 @@ program.command('collect')
   .description('Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)')
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const os = require('os');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fs = require('fs');
-    const { Keystroke } = require('../../core/collector/keylogger');
     let LoggerClass: (new () => KeyloggerType) | undefined;
     if (os.platform() === 'linux' && LinuxKeylogger) {
       LoggerClass = LinuxKeylogger;
