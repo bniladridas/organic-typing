@@ -10,7 +10,7 @@ inputs:
   python-version:
     description: 'Python version'
     required: true
-    default: '3.14'
+    default: '3.12'
   go-version:
     description: 'Go version'
     required: true
@@ -59,4 +59,3 @@ runs:
       uses: actions/setup-go@v6.1.0
       with:
         go-version: ${{ inputs.go-version }}
-        cache: false
