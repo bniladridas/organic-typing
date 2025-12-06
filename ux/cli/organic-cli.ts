@@ -2,17 +2,18 @@
 import { Command } from 'commander';
 import { spawn } from 'child_process';
 import * as fs from 'fs';
+import * as os from 'os';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
 import { calculateStats } from '../../core/processor/stats';
 import { Keystroke } from '../../core/collector/keylogger';
-interface LinuxKeyloggerType {
+interface KeyloggerType {
   start(): Promise<void>;
   stop(): void;
   getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
 }
 
-let LinuxKeylogger: (new () => LinuxKeyloggerType) | undefined;
-let MacKeylogger: (new () => LinuxKeyloggerType) | undefined;
+let LinuxKeylogger: (new () => KeyloggerType) | undefined;
+let MacKeylogger: (new () => KeyloggerType) | undefined;
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
   LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
@@ -112,9 +113,7 @@ program.command('collect')
   .description('Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)')
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-    const os = require('os');
-    let LoggerClass: (new () => LinuxKeyloggerType) | undefined;
+    let LoggerClass: (new () => KeyloggerType) | undefined;
     if (os.platform() === 'linux' && LinuxKeylogger) {
       LoggerClass = LinuxKeylogger;
     } else if (os.platform() === 'darwin' && MacKeylogger) {
