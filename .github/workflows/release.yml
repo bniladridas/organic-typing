@@ -25,15 +25,21 @@ jobs:
         version="$(cat VERSION)"
         echo "VERSION=${version}" >> "$GITHUB_ENV"
         echo "TAG=${version}" >> "$GITHUB_ENV"
-    - name: Push tag
+    - name: Check if tag exists
+      id: check_tag
       run: |
         if git rev-parse ${{ env.TAG }} >/dev/null 2>&1; then
-          echo "Tag ${{ env.TAG }} already exists, skipping tag creation"
+          echo "exists=true" >> $GITHUB_OUTPUT
         else
-          git tag ${{ env.TAG }}
-          git push origin ${{ env.TAG }}
+          echo "exists=false" >> $GITHUB_OUTPUT
         fi
+    - name: Push tag
+      if: steps.check_tag.outputs.exists == 'false'
+      run: |
+        git tag ${{ env.TAG }}
+        git push origin ${{ env.TAG }}
     - name: Create release
+      if: steps.check_tag.outputs.exists == 'false'
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
