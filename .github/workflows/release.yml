@@ -27,8 +27,12 @@ jobs:
         echo "TAG=${version}" >> "$GITHUB_ENV"
     - name: Push tag
       run: |
-        git tag ${{ env.TAG }}
-        git push origin ${{ env.TAG }}
+        if git rev-parse ${{ env.TAG }} >/dev/null 2>&1; then
+          echo "Tag ${{ env.TAG }} already exists, skipping tag creation"
+        else
+          git tag ${{ env.TAG }}
+          git push origin ${{ env.TAG }}
+        fi
     - name: Create release
       uses: actions/create-release@v1
       env:
