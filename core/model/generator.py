@@ -18,6 +18,10 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         prompt = sys.argv[1]
         gen = Generator(None)
-        print(gen.generate_text(prompt, None))
+        try:
+            print(gen.generate_text(prompt, None))
+        except Exception as e:
+            print("Error:", e)
+            sys.exit(1)
     else:
         print("Usage: python generator.py <prompt>")
