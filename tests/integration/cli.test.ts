@@ -11,7 +11,7 @@ describe('CLI Integration', () => {
     });
     cli.on('close', (code) => {
       expect(code).toBe(0);
-      expect(output).toContain('Generated: test');
+      expect(output).toMatch(/Generated: test/);
       done();
     });
   }, 10000);
