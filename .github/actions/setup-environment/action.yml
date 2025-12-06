@@ -1,0 +1,62 @@
+name: 'Setup Environment'
+description: 'Sets up Node.js, Python, and system dependencies for CI'
+
+inputs:
+  node-version:
+    description: 'Node.js version'
+    required: true
+    default: '20'
+  python-version:
+    description: 'Python version'
+    required: true
+    default: '3.14'
+  go-version:
+    description: 'Go version'
+    required: true
+    default: '1.21'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install uv
+      run: pip install uv
+      shell: bash
+
+    - name: Install system dependencies
+      run: sudo apt-get update && sudo apt-get install -y libopenblas-dev liblapack-dev
+      shell: bash
+
+    - name: Install Node dependencies
+      run: npm install
+      shell: bash
+
+    - name: Audit dependencies
+      run: npm audit --audit-level=moderate
+      shell: bash
+
+    - name: Install Python dependencies
+      run: uv pip install --system -r core/model/requirements.txt
+      shell: bash
+
+    - name: Install yamllint
+      run: pip install yamllint
+      shell: bash
+
+    - name: Setup Go
+      uses: actions/setup-go@v6.1.0
+      with:
+        go-version: ${{ inputs.go-version }}
+        cache: false
+      shell: bash
