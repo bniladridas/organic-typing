@@ -10,12 +10,19 @@ interface KeyloggerType {
 }
 
 let LinuxKeylogger: (new () => KeyloggerType) | undefined;
-let MacKeylogger: (new () => KeyloggerType) | undefined;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
 } catch {
   // evdev not available
+}
+
+let MacKeylogger: (new () => KeyloggerType) | undefined;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  MacKeylogger = require('../../core/collector/mac-keylogger').default;
+} catch {
+  // uiohook not available
 }
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
@@ -142,3 +149,4 @@ program.command('collect')
   });
 
 program.parse();
+process.exit(0);
