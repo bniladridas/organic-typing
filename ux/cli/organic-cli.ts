@@ -24,12 +24,6 @@ try {
 } catch {
   // uiohook not available
 }
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
-  MacKeylogger = require('../../core/collector/mac-keylogger').default;
-} catch {
-  // uiohook not available
-}
 
 const program = new Command();
 
