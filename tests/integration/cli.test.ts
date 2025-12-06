@@ -4,7 +4,7 @@ import * as os from 'os';
 
 describe('CLI Integration', () => {
   it('should generate text via CLI', (done) => {
-    const cli = spawn('npm', ['run', 'dev', 'generate', 'test'], { stdio: 'pipe' });
+    const cli = spawn('node', ['dist/ux/cli/organic-cli.js', 'generate', 'test'], { stdio: 'pipe' });
     let output = '';
     cli.stdout.on('data', (data) => {
       output += data.toString();
