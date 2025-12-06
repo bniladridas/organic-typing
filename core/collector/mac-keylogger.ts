@@ -19,6 +19,9 @@ export interface Keystroke {
 class MacKeylogger {
   private keystrokes: Keystroke[] = [];
   private sensitiveMode = false;
+  private isRunning = false;
+  private readonly keydownHandler = (e: UiohookKeyboardEvent) => this.handleKeyEvent('press', e);
+  private readonly keyupHandler = (e: UiohookKeyboardEvent) => this.handleKeyEvent('release', e);
 
   setSensitiveMode(sensitive: boolean) {
     this.sensitiveMode = sensitive;
@@ -32,17 +35,19 @@ class MacKeylogger {
   }
 
   async start(): Promise<void> {
-    uIOhook.on('keydown', (e: UiohookKeyboardEvent) => {
-      this.handleKeyEvent('press', e);
-    });
-    uIOhook.on('keyup', (e: UiohookKeyboardEvent) => {
-      this.handleKeyEvent('release', e);
-    });
+    if (this.isRunning) return;
+    uIOhook.on('keydown', this.keydownHandler);
+    uIOhook.on('keyup', this.keyupHandler);
     uIOhook.start();
+    this.isRunning = true;
   }
 
   stop() {
+    if (!this.isRunning) return;
     uIOhook.stop();
+    uIOhook.off('keydown', this.keydownHandler);
+    uIOhook.off('keyup', this.keyupHandler);
+    this.isRunning = false;
     this.sensitiveMode = false;
   }
 
