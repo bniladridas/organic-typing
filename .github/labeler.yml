@@ -1,49 +1,42 @@
 # SPDX-License-Identifier: BSD-3-Clause
 ---
-# Labeler configuration for automatic PR labeling based on changed files
-
-# Core/backend changes
-backend:
-  - core/**
-
-# CLI/UX changes
-frontend:
-  - ux/**
-
-# Documentation changes
-documentation:
-  - docs/**
-  - README.md
-  - CONTRIBUTING.md
-  - SECURITY.md
-  - PRIVACY.md
-
-# CI/CD changes
-ci:
-  - .github/**
-  - Dockerfile
-  - docker-compose.yml
-  - flake.nix
-
-# Testing changes
-testing:
-  - tests/**
-
-# Model/AI changes
-ai:
-  - core/model/**
-
-# Dependencies
-dependencies:
-  - package.json
-  - package-lock.json
-  - requirements.txt
-
-# Configuration
-config:
-  - tsconfig.json
-  - .eslint*
-  - .prettierrc
-  - .yamllint
-  - .gitignore
-  - VERSION
+labels:
+  - label: "backend"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["core/**", "!core/model/**"]
+  - label: "frontend"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["ux/**"]
+  - label: "documentation"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["docs/**", "README.md", "CONTRIBUTING.md", "SECURITY.md", "PRIVACY.md"]
+  - label: "ci"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: [".github/**", "!.github/labeler.yml", "Dockerfile", "docker-compose.yml", "flake.nix"]
+  - label: "testing"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["tests/**"]
+  - label: "ai"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["core/model/**"]
+  - label: "dependencies"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file: ["package.json", "package-lock.json", "core/model/requirements.txt"]
+  - label: "config"
+    matcher:
+      changed-files:
+        - any-glob-to-any-file:
+          - "tsconfig.json"
+          - ".eslint*"
+          - ".prettierrc"
+          - ".yamllint"
+          - ".gitignore"
+          - "VERSION"
+          - ".github/labeler.yml"

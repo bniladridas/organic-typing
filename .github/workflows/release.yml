@@ -3,14 +3,15 @@
 name: Release
 permissions:
   contents: write
+  pull-requests: write
 on:
   pull_request:
     types: [closed]
     branches: [main]
 
 jobs:
-  release:
-    if: github.event.pull_request.merged == true
+  bump-version:
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.head_ref, 'version-bump')
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -24,14 +25,44 @@ jobs:
       run: |
         last_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.1.3")
         IFS='.' read -r major minor patch <<< "$last_tag"
-        new_patch=$((patch + 1))
-        new_version="${major}.${minor}.${new_patch}"
+        # Validate version components are numbers
+        if ! [[ "$major" =~ ^[0-9]+$ ]] || ! [[ "$minor" =~ ^[0-9]+$ ]] || ! [[ "$patch" =~ ^[0-9]+$ ]]; then
+          echo "Invalid version format: $last_tag, defaulting to 0.1.4"
+          new_version="0.1.4"
+        else
+          new_patch=$((patch + 1))
+          new_version="${major}.${minor}.${new_patch}"
+        fi
         echo "$new_version" > VERSION
         git add VERSION
         git commit -m "chore: bump version to ${new_version}"
-        git push
+        git checkout -b version-bump-${new_version}
+        git push -u origin version-bump-${new_version}
         echo "VERSION=${new_version}" >> "$GITHUB_ENV"
-        echo "TAG=${new_version}" >> "$GITHUB_ENV"
+    - name: Create version bump PR
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: version-bump-${{ env.VERSION }}
+        title: "chore: bump version to ${{ env.VERSION }}"
+        body: "Automated version bump to ${{ env.VERSION }} after PR merge."
+        base: main
+  release:
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.head_ref, 'version-bump')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Configure git
+      run: |
+        git config user.name 'github-actions[bot]'
+        git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+    - name: Get version
+      run: |
+        version="$(cat VERSION)"
+        echo "VERSION=${version}" >> "$GITHUB_ENV"
+        echo "TAG=${version}" >> "$GITHUB_ENV"
     - name: Push tag
       run: |
         git tag ${{ env.TAG }}
