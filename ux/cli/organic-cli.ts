@@ -9,22 +9,6 @@ interface KeyloggerType {
   getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
 }
 
-let LinuxKeylogger: (new () => KeyloggerType) | undefined;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
-} catch {
-  // evdev not available
-}
-
-let MacKeylogger: (new () => KeyloggerType) | undefined;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  MacKeylogger = require('../../core/collector/mac-keylogger').default;
-} catch {
-  // uiohook not available
-}
-
 const program = new Command();
 
 program
@@ -117,6 +101,23 @@ program.command('collect')
     const os = require('os');
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fs = require('fs');
+
+    let LinuxKeylogger: (new () => KeyloggerType) | undefined;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
+    } catch {
+      // evdev not available
+    }
+
+    let MacKeylogger: (new () => KeyloggerType) | undefined;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      MacKeylogger = require('../../core/collector/mac-keylogger').default;
+    } catch {
+      // uiohook not available
+    }
+
     let LoggerClass: (new () => KeyloggerType) | undefined;
     if (os.platform() === 'linux' && LinuxKeylogger) {
       LoggerClass = LinuxKeylogger;
