@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 # SPDX-License-Identifier: BSD-3-Clause
 import sys
+
 
 class Generator:
     def __init__(self, model):
@@ -9,6 +11,7 @@ class Generator:
         # Reconstructs style & flow based on style_vector
         # Placeholder: return prompt with style applied
         return f"Generated: {prompt} (with organic style)"
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
