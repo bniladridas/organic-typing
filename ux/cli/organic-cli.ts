@@ -9,17 +9,17 @@ interface KeyloggerType {
   getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 let LinuxKeylogger: (new () => KeyloggerType) | undefined;
 try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
 } catch {
   // evdev not available
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 let MacKeylogger: (new () => KeyloggerType) | undefined;
 try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   MacKeylogger = require('../../core/collector/mac-keylogger').default;
 } catch {
   // uiohook not available
