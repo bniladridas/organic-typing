@@ -37,7 +37,7 @@ program
 program.command('generate')
   .description('Generate text with organic style')
   .argument('<prompt>', 'text prompt')
-  .action((prompt) => {
+  .action(async (prompt) => {
     console.log(`Generating text for: ${prompt}`);
     const python = spawn('python', ['core/model/generator.py', prompt]);
     python.stdout.on('data', (data) => {
@@ -46,12 +46,22 @@ program.command('generate')
     python.stderr.on('data', (data) => {
       console.error('Error:', data.toString());
     });
+    python.on('error', (err) => {
+      console.error('Failed to start python script:', err);
+      process.exit(1);
+    });
+    const code = await new Promise<number>((resolve) => {
+      python.on('close', resolve);
+    });
+    if (code !== 0) {
+      process.exit(code);
+    }
   });
 
 program.command('verify')
   .description('Verify typing signature')
   .argument('<file>', 'keystroke data file')
-  .action((file) => {
+  .action(async (file) => {
     console.log(`Verifying signature from: ${file}`);
     try {
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
