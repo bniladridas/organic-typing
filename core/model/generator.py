@@ -11,7 +11,7 @@ class Generator:
     def generate_text(self, prompt, style_vector):
         # Reconstructs style & flow based on style_vector
         # Placeholder: return prompt with style applied
-        return f"Generated: {prompt} (with organic style)"
+        return "Generated: {} (with organic style)".format(prompt)
 
 
 if __name__ == "__main__":
