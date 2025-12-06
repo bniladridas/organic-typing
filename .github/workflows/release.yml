@@ -38,7 +38,7 @@ jobs:
         git add VERSION
         git commit -m "chore: bump version to ${new_version}"
         git checkout -b version-bump-${new_version}
-        git push -u origin version-bump-${new_version}
+        git push -u origin version-bump-${new_version} --force
         echo "VERSION=${new_version}" >> "$GITHUB_ENV"
     - name: Create version bump PR
       uses: peter-evans/create-pull-request@v6
