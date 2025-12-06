@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 import { Command } from 'commander';
 import { spawn } from 'child_process';
-import * as fs from 'fs';
-import * as os from 'os';
-import { normalizeKeystrokes } from '../../core/processor/normalize';
-import { calculateStats } from '../../core/processor/stats';
-import { Keystroke } from '../../core/collector/keylogger';
+import type { Keystroke } from '../../core/collector/keylogger';
 interface KeyloggerType {
   start(): Promise<void>;
   stop(): void;
@@ -49,6 +45,9 @@ program.command('verify')
   .action(async (file) => {
     console.log(`Verifying signature from: ${file}`);
     try {
+      const fs = require('fs');
+      const { normalizeKeystrokes } = require('../../core/processor/normalize');
+      const { calculateStats } = require('../../core/processor/stats');
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
       const normalized = normalizeKeystrokes(data);
       const stats = calculateStats(normalized);
@@ -110,6 +109,9 @@ program.command('collect')
   .description('Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)')
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
+    const os = require('os');
+    const fs = require('fs');
+    const { Keystroke } = require('../../core/collector/keylogger');
     let LoggerClass: (new () => KeyloggerType) | undefined;
     if (os.platform() === 'linux' && LinuxKeylogger) {
       LoggerClass = LinuxKeylogger;
