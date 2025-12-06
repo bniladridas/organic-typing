@@ -37,7 +37,7 @@ program
 program.command('generate')
   .description('Generate text with organic style')
   .argument('<prompt>', 'text prompt')
-  .action(async (prompt) => {
+  .action((prompt) => {
     console.log(`Generating text for: ${prompt}`);
     console.log(`Generated: ${prompt}`);
   });
