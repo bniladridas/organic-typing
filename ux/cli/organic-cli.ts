@@ -39,7 +39,8 @@ program.command('generate')
   .argument('<prompt>', 'text prompt')
   .action(async (prompt) => {
     console.log(`Generating text for: ${prompt}`);
-    const python = spawn('python3', ['core/model/generator.py', prompt]);
+    const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
+    const python = spawn(pythonCmd, ['core/model/generator.py', prompt]);
     python.stdout.on('data', (data) => {
       console.log(data.toString().trim());
     });
@@ -69,7 +70,8 @@ program.command('verify')
       const stats = calculateStats(normalized);
       console.log(`Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`);
       // Encode stats to vector
-      const encoder = spawn('python3', ['core/model/organic-encoder.py'], {
+      const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
+      const encoder = spawn(pythonCmd, ['core/model/organic-encoder.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
       const statsJson = JSON.stringify(stats);
@@ -87,7 +89,8 @@ program.command('verify')
           try {
             const vector = JSON.parse(vectorOutput.trim());
             // Now verify
-            const verifier = spawn('python3', ['core/model/verifier.py'], {
+            const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
+            const verifier = spawn(pythonCmd, ['core/model/verifier.py'], {
               stdio: ['pipe', 'pipe', 'pipe']
             });
             verifier.stdin.write(JSON.stringify(vector));
