@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: BSD-3-Clause
-import * as os from 'os';
 
 interface KeyloggerType {
   start(): Promise<void>;
