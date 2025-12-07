@@ -9,7 +9,7 @@ describe('anonymize', () => {
     ];
     const vector = toRhythmVector(events);
     expect(vector.interKeyMean).toBe(100);
-    expect(vector.backspaceRate).toBe(1/3);
+    expect(vector.backspaceRate).toBe(1 / 3);
     expect(vector.sampleLength).toBe(3);
   });
 

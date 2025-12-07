@@ -8,7 +8,11 @@ import { Keystroke } from '../../core/collector/keylogger';
 interface LinuxKeyloggerType {
   start(): Promise<void>;
   stop(): void;
-  getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
+  getKeystrokes(): {
+    key: string;
+    timestamp: number;
+    type: 'press' | 'release';
+  }[];
 }
 
 let LinuxKeylogger: (new () => LinuxKeyloggerType) | undefined;
@@ -21,12 +25,10 @@ try {
 
 const program = new Command();
 
-program
-  .name('organic')
-  .description('Organic typing CLI')
-  .version('0.1.0');
+program.name('organic').description('Organic typing CLI').version('0.1.0');
 
-program.command('generate')
+program
+  .command('generate')
   .description('Generate text with organic style')
   .argument('<prompt>', 'text prompt')
   .action((prompt) => {
@@ -40,7 +42,8 @@ program.command('generate')
     });
   });
 
-program.command('verify')
+program
+  .command('verify')
   .description('Verify typing signature')
   .argument('<file>', 'keystroke data file')
   .action((file) => {
@@ -49,10 +52,12 @@ program.command('verify')
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
       const normalized = normalizeKeystrokes(data);
       const stats = calculateStats(normalized);
-      console.log(`Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`);
+      console.log(
+        `Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`
+      );
       // Encode stats to vector
       const encoder = spawn('python3', ['core/model/organic-encoder.py'], {
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       });
       const statsJson = JSON.stringify(stats);
       encoder.stdin.write(statsJson);
@@ -70,7 +75,7 @@ program.command('verify')
             const vector = JSON.parse(vectorOutput.trim());
             // Now verify
             const verifier = spawn('python3', ['core/model/verifier.py'], {
-              stdio: ['pipe', 'pipe', 'pipe']
+              stdio: ['pipe', 'pipe', 'pipe'],
             });
             verifier.stdin.write(JSON.stringify(vector));
             verifier.stdin.end();
@@ -101,7 +106,8 @@ program.command('verify')
     }
   });
 
-program.command('collect')
+program
+  .command('collect')
   .description('Collect keystroke data on Ubuntu (requires root/sudo)')
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
@@ -114,7 +120,7 @@ program.command('collect')
     try {
       await logger.start();
       // Wait for user to stop, but since CLI, perhaps collect for 10 seconds
-      await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds
+      await new Promise((resolve) => setTimeout(resolve, 10000)); // 10 seconds
       logger.stop();
       const data = logger.getKeystrokes();
       fs.writeFileSync(file, JSON.stringify(data, null, 2));

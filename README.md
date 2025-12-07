@@ -16,10 +16,10 @@ In this example, the collector records each keypress with timing information. Th
 
 ```ts
 const event = {
-  key: "t",
+  key: 't',
   down: 1052,
   up: 1120,
-  pauseBefore: 320
+  pauseBefore: 320,
 };
 ```
 
@@ -27,14 +27,14 @@ A more subtle pattern appears when multiple short pauses combine with minor back
 
 ```ts
 [
-  { key: "h", pauseBefore: 210 },
-  { key: "e", pauseBefore: 95 },
-  { key: "l", pauseBefore: 82 },
-  { key: "l", pauseBefore: 400 },
-  { key: "Backspace" },
-  { key: "l", pauseBefore: 180 },
-  { key: "o", pauseBefore: 70 }
-]
+  { key: 'h', pauseBefore: 210 },
+  { key: 'e', pauseBefore: 95 },
+  { key: 'l', pauseBefore: 82 },
+  { key: 'l', pauseBefore: 400 },
+  { key: 'Backspace' },
+  { key: 'l', pauseBefore: 180 },
+  { key: 'o', pauseBefore: 70 },
+];
 ```
 
 These timing signals become inputs to an encoder, which embeds them into a latent representation. The vector allows a verifier to distinguish human typing from AI-generated text, and it enables a generator to reconstruct the writer’s natural cadence.

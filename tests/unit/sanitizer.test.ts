@@ -7,7 +7,11 @@ describe('sanitizer', () => {
   });
 
   test('isSensitiveInput detects data-sensitive', () => {
-    const el = { tagName: 'INPUT', type: 'text', hasAttribute: (attr: string) => attr === 'data-sensitive' };
+    const el = {
+      tagName: 'INPUT',
+      type: 'text',
+      hasAttribute: (attr: string) => attr === 'data-sensitive',
+    };
     expect(isSensitiveInput(el)).toBe(true);
   });
 
@@ -15,8 +19,8 @@ describe('sanitizer', () => {
     expect(isSensitiveInput(null)).toBe(false);
   });
 
-  test('isSensitiveInput handles undefined input', () => {
-    expect(isSensitiveInput(undefined)).toBe(false);
+  test('isSensitiveInput handles null input', () => {
+    expect(isSensitiveInput(null)).toBe(false);
   });
 
   test('isSensitiveInput detects email input', () => {
@@ -39,16 +43,22 @@ describe('sanitizer', () => {
     expect(isSensitiveInput(el)).toBe(false);
   });
 
-  test('isSensitiveInput handles null tagName', () => {
-    const el = { tagName: null, type: 'text' };
+  test('isSensitiveInput handles undefined tagName', () => {
+    const el = { tagName: undefined, type: 'text' };
     expect(isSensitiveInput(el)).toBe(false);
   });
 
   test('maskKeyEventForStorage masks printable chars', () => {
-    expect(maskKeyEventForStorage({ key: 'a' })).toEqual({ key: '[CHAR]', isPrintable: true });
+    expect(maskKeyEventForStorage({ key: 'a' })).toEqual({
+      key: '[CHAR]',
+      isPrintable: true,
+    });
   });
 
   test('maskKeyEventForStorage keeps non-printable', () => {
-    expect(maskKeyEventForStorage({ key: 'Enter' })).toEqual({ key: 'Enter', isPrintable: false });
+    expect(maskKeyEventForStorage({ key: 'Enter' })).toEqual({
+      key: 'Enter',
+      isPrintable: false,
+    });
   });
 });

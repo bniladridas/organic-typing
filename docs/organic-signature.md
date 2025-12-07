@@ -10,10 +10,10 @@ Represent typing behavior as structured vectors that can be compared or reused f
 
 ## Components
 
-* **Timing Patterns**: Intervals between individual keystrokes.
-* **Pauses**: Longer breaks associated with thinking or self-correction.
-* **Rhythm Vectors**: Distributions of typing speeds over time.
-* **Flow Signatures**: Metrics describing pacing, grouping, and natural phrasing.
+- **Timing Patterns**: Intervals between individual keystrokes.
+- **Pauses**: Longer breaks associated with thinking or self-correction.
+- **Rhythm Vectors**: Distributions of typing speeds over time.
+- **Flow Signatures**: Metrics describing pacing, grouping, and natural phrasing.
 
 ## Usage
 
