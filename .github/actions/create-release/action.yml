@@ -9,6 +9,10 @@ runs:
     - name: Get version
       run: |
         version="$(cat VERSION)"
+        if [ -z "$version" ]; then
+          echo "Error: VERSION file is empty or could not be read."
+          exit 1
+        fi
         echo "VERSION=${version}" >> "$GITHUB_ENV"
         echo "TAG=${version}" >> "$GITHUB_ENV"
       shell: bash
