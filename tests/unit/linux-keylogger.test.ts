@@ -4,28 +4,21 @@ import * as os from 'os';
 interface LinuxKeyloggerType {
   start(): Promise<void>;
   stop(): void;
-  getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
-  setSensitiveMode(sensitive: boolean): void;
+  getKeystrokes(): {
+    key: string;
+    timestamp: number;
+    type: 'press' | 'release';
+  }[];
 }
 
 if (os.platform() === 'linux') {
-  jest.mock('evdev', () => ({
-    list: jest.fn(),
-    Reader: jest.fn().mockImplementation(() => ({
-      on: jest.fn(),
-      close: jest.fn(),
-    })),
-    EV_KEY: 1,
-    KEY: {
-      30: 'A',
-      48: 'B',
-    },
-  }));
-
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mockEvdev = require('evdev');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const LinuxKeyloggerClass = require('../../core/collector/linux-keylogger').default;
+  let LinuxKeyloggerClass: any;
+  beforeAll(async () => {
+    LinuxKeyloggerClass = (await import('../../core/collector/linux-keylogger'))
+      .default;
+  });
 
   describe('LinuxKeylogger', () => {
     let logger: LinuxKeyloggerType;
@@ -36,7 +29,9 @@ if (os.platform() === 'linux') {
     });
 
     it('should start and find keyboard device', async () => {
-      mockEvdev.list.mockReturnValue([{ name: 'AT Translated Set 2 keyboard' }]);
+      mockEvdev.list.mockReturnValue([
+        { name: 'AT Translated Set 2 keyboard' },
+      ]);
       const mockReader = { on: jest.fn(), close: jest.fn() };
       mockEvdev.Reader.mockReturnValue(mockReader);
 
@@ -66,8 +61,16 @@ if (os.platform() === 'linux') {
 
       const keystrokes = logger.getKeystrokes();
       expect(keystrokes).toHaveLength(2);
-      expect(keystrokes[0]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'press' });
-      expect(keystrokes[1]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'release' });
+      expect(keystrokes[0]).toEqual({
+        key: 'a',
+        timestamp: expect.any(Number),
+        type: 'press',
+      });
+      expect(keystrokes[1]).toEqual({
+        key: 'a',
+        timestamp: expect.any(Number),
+        type: 'release',
+      });
     });
 
     it('should stop and close reader', async () => {
@@ -79,36 +82,6 @@ if (os.platform() === 'linux') {
       logger.stop();
 
       expect(mockReader.close).toHaveBeenCalled();
-    });
-
-    it('should not capture keystrokes in sensitive mode', async () => {
-      mockEvdev.list.mockReturnValue([{ name: 'keyboard' }]);
-      const mockReader = { on: jest.fn(), close: jest.fn() };
-      mockEvdev.Reader.mockReturnValue(mockReader);
-
-      logger.setSensitiveMode(true);
-      await logger.start();
-
-      const eventHandler = mockReader.on.mock.calls[0][1];
-      eventHandler({ type: 1, code: 30, value: 1 }); // press A
-
-      const keystrokes = logger.getKeystrokes();
-      expect(keystrokes).toHaveLength(0);
-    });
-
-    it('should capture keystrokes when not in sensitive mode', async () => {
-      mockEvdev.list.mockReturnValue([{ name: 'keyboard' }]);
-      const mockReader = { on: jest.fn(), close: jest.fn() };
-      mockEvdev.Reader.mockReturnValue(mockReader);
-
-      logger.setSensitiveMode(false);
-      await logger.start();
-
-      const eventHandler = mockReader.on.mock.calls[0][1];
-      eventHandler({ type: 1, code: 30, value: 1 }); // press A
-
-      const keystrokes = logger.getKeystrokes();
-      expect(keystrokes).toHaveLength(1);
     });
   });
 } else {

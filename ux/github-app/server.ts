@@ -26,7 +26,8 @@ const port = process.env.PORT || 3000;
 
 // Encryption key for data at rest (use a secure password in ENCRYPTION_KEY and salt in ENCRYPTION_SALT)
 const encryptionKeyEnv = process.env.ENCRYPTION_KEY;
-if (!encryptionKeyEnv) throw new Error('ENCRYPTION_KEY environment variable must be set');
+if (!encryptionKeyEnv)
+  throw new Error('ENCRYPTION_KEY environment variable must be set');
 const salt = process.env.ENCRYPTION_SALT;
 if (!salt) throw new Error('ENCRYPTION_SALT environment variable must be set');
 const ENCRYPTION_KEY = crypto.scryptSync(encryptionKeyEnv, salt, 32);
@@ -74,7 +75,10 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   const token = authHeader.slice(7);
-  if (token.length !== apiSecret.length || !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(apiSecret))) {
+  if (
+    token.length !== apiSecret.length ||
+    !crypto.timingSafeEqual(Buffer.from(token), Buffer.from(apiSecret))
+  ) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   next();
@@ -87,7 +91,9 @@ const appId = process.env.GITHUB_APP_ID;
 const privateKey = process.env.GITHUB_PRIVATE_KEY;
 
 if (!appId || !privateKey) {
-  throw new Error('GITHUB_APP_ID and GITHUB_PRIVATE_KEY must be set in environment variables.');
+  throw new Error(
+    'GITHUB_APP_ID and GITHUB_PRIVATE_KEY must be set in environment variables.'
+  );
 }
 
 if (!process.env.API_SECRET) {
@@ -111,8 +117,6 @@ function textToKeystrokes(text: string | null): Keystroke[] {
   return keystrokes;
 }
 
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handlePullRequest(event: any, isUpdate: boolean) {
   const installationId = event.payload.installation?.id;
@@ -130,28 +134,36 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
 
   // Encode stats using Python model
   const statsJson = JSON.stringify(stats);
-  const encodedVector = JSON.parse(execSync(`python3 core/model/organic-encoder.py`, {
-    input: statsJson,
-    encoding: 'utf-8'
-  }).toString().trim());
+  const encodedVector = JSON.parse(
+    execSync(`python3 core/model/organic-encoder.py`, {
+      input: statsJson,
+      encoding: 'utf-8',
+    })
+      .toString()
+      .trim()
+  );
 
   // Verify using Python model
   const vectorJson = JSON.stringify(encodedVector);
   const verification = execSync(`python3 core/model/verifier.py`, {
     input: vectorJson,
-    encoding: 'utf-8'
-  }).toString().trim();
+    encoding: 'utf-8',
+  })
+    .toString()
+    .trim();
 
-   // Update signature atomically (encrypted)
-   const userLogin = pr.user.login;
-   const encryptedStats = encrypt(JSON.stringify(stats));
-   await kv.hset('signatures', { [userLogin]: encryptedStats });
-    console.log(`AUDIT: Signature updated for user ${escapeHtml(userLogin)} at ${new Date().toISOString()}`);
+  // Update signature atomically (encrypted)
+  const userLogin = pr.user.login;
+  const encryptedStats = encrypt(JSON.stringify(stats));
+  await kv.hset('signatures', { [userLogin]: encryptedStats });
+  console.log(
+    `AUDIT: Signature updated for user ${escapeHtml(userLogin)} at ${new Date().toISOString()}`
+  );
 
-   const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
-   const commentBody = isUpdate
-     ? `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${escapeHtml(userLogin)}.`
-     : `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${escapeHtml(userLogin)}.`;
+  const analysis = `Average Interval: ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}, Rhythm: ${stats.rhythmVector.join(', ')}, Verification: ${verification}`;
+  const commentBody = isUpdate
+    ? `Organic Typing Analysis (updated):\n${analysis}\nSignature updated for user ${escapeHtml(userLogin)}.`
+    : `Organic Typing Analysis:\n${analysis}\nSignature stored for user ${escapeHtml(userLogin)}.`;
 
   await (octokit as Octokit).issues.createComment({
     owner: event.payload.repository.owner.login,
@@ -187,7 +199,9 @@ app.post('/api/consent', async (req: Request, res: Response) => {
   const { userId, consent } = req.body;
   // store one-line consent record: { userId, consent, ts }
   await kv.hset('consent', { [userId]: { consent, ts: Date.now() } });
-  console.log(`AUDIT: Consent updated for user ${escapeHtml(userId)} from IP ${req.ip} at ${new Date().toISOString()}`);
+  console.log(
+    `AUDIT: Consent updated for user ${escapeHtml(userId)} from IP ${req.ip} at ${new Date().toISOString()}`
+  );
   res.sendStatus(204);
 });
 
@@ -198,27 +212,39 @@ app.post('/api/export', requireAuth, async (req: Request, res: Response) => {
   const encryptedVectors = await kv.hget('signatures', userId);
   if (encryptedVectors) {
     const decryptedVectors = JSON.parse(decrypt(encryptedVectors as string));
-    console.log(`AUDIT: Data exported for user ${escapeHtml(userId)} from IP ${req.ip} at ${new Date().toISOString()}`);
+    console.log(
+      `AUDIT: Data exported for user ${escapeHtml(userId)} from IP ${req.ip} at ${new Date().toISOString()}`
+    );
     res.json({ exportedAt: Date.now(), vectors: decryptedVectors });
   } else {
-    console.log(`AUDIT: Export attempted for user ${escapeHtml(userId)} from IP ${req.ip} but no data found at ${new Date().toISOString()}`);
+    console.log(
+      `AUDIT: Export attempted for user ${escapeHtml(userId)} from IP ${req.ip} but no data found at ${new Date().toISOString()}`
+    );
     res.status(404).json({ error: 'No data found' });
   }
 });
 
 // Endpoint for data deletion
-app.delete('/api/delete/:user', requireAuth, async (req: Request, res: Response) => {
-  const user = req.params.user;
-  try {
-    await kv.hdel('signatures', user);
-    await kv.hdel('consent', user);
-    console.log(`AUDIT: Data deleted for user ${escapeHtml(user)} from IP ${req.ip} at ${new Date().toISOString()}`);
-    res.send(`Data for user ${escapeHtml(user)} deleted.`);
-  } catch (error) {
-    console.log(`AUDIT: Error deleting data for user ${escapeHtml(user)} from IP ${req.ip} at ${new Date().toISOString()}: ${error}`);
-    res.status(500).send('Error deleting data.');
+app.delete(
+  '/api/delete/:user',
+  requireAuth,
+  async (req: Request, res: Response) => {
+    const user = req.params.user;
+    try {
+      await kv.hdel('signatures', user);
+      await kv.hdel('consent', user);
+      console.log(
+        `AUDIT: Data deleted for user ${escapeHtml(user)} from IP ${req.ip} at ${new Date().toISOString()}`
+      );
+      res.send(`Data for user ${escapeHtml(user)} deleted.`);
+    } catch (error) {
+      console.log(
+        `AUDIT: Error deleting data for user ${escapeHtml(user)} from IP ${req.ip} at ${new Date().toISOString()}: ${error}`
+      );
+      res.status(500).send('Error deleting data.');
+    }
   }
-});
+);
 
 // For Vercel serverless
 export default app;
