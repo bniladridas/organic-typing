@@ -21,7 +21,10 @@ describe('Keylogger', () => {
     logger.start();
 
     expect(mockStdin.setRawMode).toHaveBeenCalledWith(true);
-    expect((mockStdin.on as jest.Mock)).toHaveBeenCalledWith('data', expect.any(Function));
+    expect(mockStdin.on as jest.Mock).toHaveBeenCalledWith(
+      'data',
+      expect.any(Function)
+    );
   });
 
   it('should capture keystrokes when not in sensitive mode', () => {
@@ -32,7 +35,12 @@ describe('Keylogger', () => {
 
     const keystrokes = logger.getKeystrokes();
     expect(keystrokes).toHaveLength(1);
-    expect(keystrokes[0]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'press', sensitive: false });
+    expect(keystrokes[0]).toEqual({
+      key: 'a',
+      timestamp: expect.any(Number),
+      type: 'press',
+      sensitive: false,
+    });
   });
 
   it('should not capture keystrokes in sensitive mode', () => {

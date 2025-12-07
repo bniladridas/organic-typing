@@ -13,13 +13,6 @@
     "declaration": true,
     "sourceMap": true
   },
-  "include": [
-    "ux/**/*",
-    "core/**/*",
-    "tests/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "include": ["ux/**/*", "core/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

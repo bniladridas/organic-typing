@@ -9,13 +9,15 @@ describe('Model Integration', () => {
       averageInterval: 100,
       stdInterval: 10,
       pauseCount: 0,
-      rhythmVector: [0, 1, 0, 0, 0]
+      rhythmVector: [0, 1, 0, 0, 0],
     };
     const statsJson = JSON.stringify(stats);
     const result = execSync(`${pythonCmd} core/model/organic-encoder.py`, {
       input: statsJson,
-      encoding: 'utf-8'
-    }).toString().trim();
+      encoding: 'utf-8',
+    })
+      .toString()
+      .trim();
     const vector = JSON.parse(result);
     expect(Array.isArray(vector)).toBe(true);
     expect(vector.length).toBe(8); // 3 stats + 5 rhythm
@@ -26,8 +28,10 @@ describe('Model Integration', () => {
     const vectorJson = JSON.stringify(vector);
     const result = execSync(`${pythonCmd} core/model/verifier.py`, {
       input: vectorJson,
-      encoding: 'utf-8'
-    }).toString().trim();
+      encoding: 'utf-8',
+    })
+      .toString()
+      .trim();
     expect(result).toBe('Human'); // Based on heuristic
   });
 });

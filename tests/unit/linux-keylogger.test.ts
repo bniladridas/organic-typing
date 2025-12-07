@@ -4,7 +4,11 @@ import * as os from 'os';
 interface LinuxKeyloggerType {
   start(): Promise<void>;
   stop(): void;
-  getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
+  getKeystrokes(): {
+    key: string;
+    timestamp: number;
+    type: 'press' | 'release';
+  }[];
   setSensitiveMode(sensitive: boolean): void;
 }
 
@@ -25,7 +29,8 @@ if (os.platform() === 'linux') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mockEvdev = require('evdev');
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const LinuxKeyloggerClass = require('../../core/collector/linux-keylogger').default;
+  const LinuxKeyloggerClass =
+    require('../../core/collector/linux-keylogger').default;
 
   describe('LinuxKeylogger', () => {
     let logger: LinuxKeyloggerType;
@@ -36,7 +41,9 @@ if (os.platform() === 'linux') {
     });
 
     it('should start and find keyboard device', async () => {
-      mockEvdev.list.mockReturnValue([{ name: 'AT Translated Set 2 keyboard' }]);
+      mockEvdev.list.mockReturnValue([
+        { name: 'AT Translated Set 2 keyboard' },
+      ]);
       const mockReader = { on: jest.fn(), close: jest.fn() };
       mockEvdev.Reader.mockReturnValue(mockReader);
 
@@ -66,8 +73,16 @@ if (os.platform() === 'linux') {
 
       const keystrokes = logger.getKeystrokes();
       expect(keystrokes).toHaveLength(2);
-      expect(keystrokes[0]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'press' });
-      expect(keystrokes[1]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'release' });
+      expect(keystrokes[0]).toEqual({
+        key: 'a',
+        timestamp: expect.any(Number),
+        type: 'press',
+      });
+      expect(keystrokes[1]).toEqual({
+        key: 'a',
+        timestamp: expect.any(Number),
+        type: 'release',
+      });
     });
 
     it('should stop and close reader', async () => {
