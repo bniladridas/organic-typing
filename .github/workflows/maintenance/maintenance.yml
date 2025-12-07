@@ -1,0 +1,108 @@
+---
+# SPDX-License-Identifier: BSD-3-Clause
+# Maintenance workflow for automated checks, security analysis, and version management
+# Runs on pushes, PRs, weekly, or manually to ensure code health and updates
+name: Maintenance
+permissions:
+  contents: write  # For pushing commits and creating branches
+  security-events: write  # For CodeQL to upload results
+  pull-requests: write  # For creating PRs
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  # Job to check for outdated dependencies and security vulnerabilities
+  # Configures git for potential commits and pushes updates if changes are made
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure git for commits
+        uses: ./.github/actions/git-config
+      - name: Check for outdated dependencies (npm outdated)
+        run: npm outdated || true
+      - name: Run security audit (npm audit)
+        run: npm audit
+      - name: Commit and push any changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "chore: update dependencies"
+            git push
+          fi
+
+  # Job for automated security analysis using CodeQL
+  # Scans JavaScript and Python code for vulnerabilities
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Security scan
+        uses: ./.github/actions/security-scan
+
+  # Job to check releases, tags, and manage version bumps
+  # Lists recent releases and tags, bumps version, and creates PR for review
+  release-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for git describe
+      - name: Install jq for JSON processing
+        run: which jq || sudo apt-get update && sudo apt-get install -y jq
+      - name: List recent releases via GitHub API
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const releases = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 5
+            });
+            console.log('Recent releases:', releases.data.map(r => r.tag_name));
+
+      - name: List recent git tags
+        run: git tag -l | tail -10
+      - name: Configure git for version bump
+        uses: ./.github/actions/git-config
+      - name: Calculate and apply version bump
+        run: |
+          git checkout -b version-bump
+          latest_tag=$(git tag | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+$' \
+            | sed 's/^v//' | sort -V | tail -1 || echo "0.0.0")
+          echo "Latest tag: $latest_tag"
+          # Simple semver bump logic (patch)
+          IFS='.' read -r major minor patch <<< "$latest_tag"
+          new_patch=$((patch + 1))
+          next_version="$major.$minor.$new_patch"
+          echo "Next version: $next_version"
+          echo "$next_version" > VERSION
+          # Update package.json version
+          jq ".version = \"$next_version\"" package.json > package.json.tmp && mv package.json.tmp package.json
+          git add VERSION package.json
+          if git diff --staged --quiet; then
+            echo "No changes to version files"
+          else
+            git commit -m "chore: bump version to $next_version"
+          fi
+      - name: Create version bump PR
+        uses: ./.github/actions/create-version-pr
+        with:
+          version: ${{ env.next_version }}
+
+  # Job to notify on failures across all maintenance jobs
+  # Runs only if any dependent job fails, for alerting maintainers
+  notification:
+    runs-on: ubuntu-latest
+    needs: [dependency-check, security, release-check]
+    if: failure()
+    steps:
+      # Email notification will be added later
+      - name: Log failure notification
+        run: echo "Maintenance checks failed. Review workflow logs for issues."

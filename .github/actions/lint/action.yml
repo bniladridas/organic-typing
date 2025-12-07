@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+name: 'Lint'
+description: 'Runs linting checks'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Lint GitHub Actions
+      uses: reviewdog/action-actionlint@v1
+    - name: Lint
+      run: npm run lint
+      shell: bash
+    - name: Lint YAML
+      run: yamllint .
+      shell: bash

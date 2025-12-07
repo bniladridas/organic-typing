@@ -1,0 +1,24 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+name: 'Test'
+description: 'Runs build and test steps'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build
+      run: npm run build
+      shell: bash
+    - name: Run unit tests
+      run: npm run test:unit
+      shell: bash
+    - name: Run integration tests
+      run: npm run test:integration -- --runInBand
+      shell: bash
+    - name: Build Docker image
+      if: runner.os == 'Linux'
+      run: docker build -t organic-typing .
+      shell: bash
+    - name: Test Docker image
+      run: docker run --rm organic-typing npm run dev --version
+      shell: bash
