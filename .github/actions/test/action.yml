@@ -20,5 +20,6 @@ runs:
       run: docker build -t organic-typing .
       shell: bash
     - name: Test Docker image
+      if: runner.os == 'Linux'
       run: docker run --rm organic-typing npm run dev --version
       shell: bash
