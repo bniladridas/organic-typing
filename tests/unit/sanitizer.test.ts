@@ -7,7 +7,11 @@ describe('sanitizer', () => {
   });
 
   test('isSensitiveInput detects data-sensitive', () => {
-    const el = { tagName: 'INPUT', type: 'text', hasAttribute: (attr: string) => attr === 'data-sensitive' };
+    const el = {
+      tagName: 'INPUT',
+      type: 'text',
+      hasAttribute: (attr: string) => attr === 'data-sensitive',
+    };
     expect(isSensitiveInput(el)).toBe(true);
   });
 
@@ -45,10 +49,16 @@ describe('sanitizer', () => {
   });
 
   test('maskKeyEventForStorage masks printable chars', () => {
-    expect(maskKeyEventForStorage({ key: 'a' })).toEqual({ key: '[CHAR]', isPrintable: true });
+    expect(maskKeyEventForStorage({ key: 'a' })).toEqual({
+      key: '[CHAR]',
+      isPrintable: true,
+    });
   });
 
   test('maskKeyEventForStorage keeps non-printable', () => {
-    expect(maskKeyEventForStorage({ key: 'Enter' })).toEqual({ key: 'Enter', isPrintable: false });
+    expect(maskKeyEventForStorage({ key: 'Enter' })).toEqual({
+      key: 'Enter',
+      isPrintable: false,
+    });
   });
 });

@@ -10,7 +10,5 @@
     "pull_requests": "read",
     "issues": "write"
   },
-  "default_events": [
-    "pull_request"
-  ]
+  "default_events": ["pull_request"]
 }

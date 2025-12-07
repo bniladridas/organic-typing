@@ -3,7 +3,11 @@
 interface KeyloggerType {
   start(): Promise<void>;
   stop(): void;
-  getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
+  getKeystrokes(): {
+    key: string;
+    timestamp: number;
+    type: 'press' | 'release';
+  }[];
   setSensitiveMode(sensitive: boolean): void;
 }
 
@@ -20,9 +24,8 @@ jest.mock('uiohook-napi', () => ({
   },
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
 const mockUiohook = require('uiohook-napi');
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+
 const MacKeyloggerClass = require('../../core/collector/mac-keylogger').default;
 
 describe('MacKeylogger', () => {
@@ -40,8 +43,14 @@ describe('MacKeylogger', () => {
   it('should start and register event listeners', async () => {
     await logger.start();
 
-    expect(mockUiohook.uIOhook.on).toHaveBeenCalledWith('keydown', expect.any(Function));
-    expect(mockUiohook.uIOhook.on).toHaveBeenCalledWith('keyup', expect.any(Function));
+    expect(mockUiohook.uIOhook.on).toHaveBeenCalledWith(
+      'keydown',
+      expect.any(Function)
+    );
+    expect(mockUiohook.uIOhook.on).toHaveBeenCalledWith(
+      'keyup',
+      expect.any(Function)
+    );
     expect(mockUiohook.uIOhook.start).toHaveBeenCalled();
   });
 
@@ -56,25 +65,37 @@ describe('MacKeylogger', () => {
   it('should capture keystrokes on keydown and keyup', async () => {
     await logger.start();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find((call: any) => call[0] === 'keydown')[1];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const keyupHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find((call: any) => call[0] === 'keyup')[1];
+    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find(
+      (call: any) => call[0] === 'keydown'
+    )[1];
+
+    const keyupHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find(
+      (call: any) => call[0] === 'keyup'
+    )[1];
 
     keydownHandler({ keycode: 65 }); // A
     keyupHandler({ keycode: 65 }); // A
 
     const keystrokes = logger.getKeystrokes();
     expect(keystrokes).toHaveLength(2);
-    expect(keystrokes[0]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'press' });
-    expect(keystrokes[1]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'release' });
+    expect(keystrokes[0]).toEqual({
+      key: 'a',
+      timestamp: expect.any(Number),
+      type: 'press',
+    });
+    expect(keystrokes[1]).toEqual({
+      key: 'a',
+      timestamp: expect.any(Number),
+      type: 'release',
+    });
   });
 
   it('should skip unmapped keycodes', async () => {
     await logger.start();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find((call: any) => call[0] === 'keydown')[1];
+    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find(
+      (call: any) => call[0] === 'keydown'
+    )[1];
 
     keydownHandler({ keycode: 999 }); // Unmapped
 
@@ -87,8 +108,14 @@ describe('MacKeylogger', () => {
     logger.stop();
 
     expect(mockUiohook.uIOhook.stop).toHaveBeenCalled();
-    expect(mockUiohook.uIOhook.off).toHaveBeenCalledWith('keydown', expect.any(Function));
-    expect(mockUiohook.uIOhook.off).toHaveBeenCalledWith('keyup', expect.any(Function));
+    expect(mockUiohook.uIOhook.off).toHaveBeenCalledWith(
+      'keydown',
+      expect.any(Function)
+    );
+    expect(mockUiohook.uIOhook.off).toHaveBeenCalledWith(
+      'keyup',
+      expect.any(Function)
+    );
   });
 
   it('should not stop if not running', () => {
@@ -101,8 +128,9 @@ describe('MacKeylogger', () => {
     logger.setSensitiveMode(true);
     await logger.start();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find((call: any) => call[0] === 'keydown')[1];
+    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find(
+      (call: any) => call[0] === 'keydown'
+    )[1];
 
     keydownHandler({ keycode: 65 }); // A
 
@@ -114,8 +142,9 @@ describe('MacKeylogger', () => {
     logger.setSensitiveMode(false);
     await logger.start();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find((call: any) => call[0] === 'keydown')[1];
+    const keydownHandler = (mockUiohook.uIOhook.on.mock.calls as any[]).find(
+      (call: any) => call[0] === 'keydown'
+    )[1];
 
     keydownHandler({ keycode: 65 }); // A
 

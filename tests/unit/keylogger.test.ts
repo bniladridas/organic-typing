@@ -6,7 +6,6 @@ const mockStdin = {
   on: jest.fn(),
 } as unknown as NodeJS.ReadStream;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 jest.spyOn(process, 'stdin', 'get').mockReturnValue(mockStdin as any);
 
 describe('Keylogger', () => {
@@ -25,7 +24,10 @@ describe('Keylogger', () => {
     logger.start();
 
     expect(mockStdin.setRawMode).toHaveBeenCalledWith(true);
-    expect((mockStdin.on as jest.Mock)).toHaveBeenCalledWith('data', expect.any(Function));
+    expect(mockStdin.on as jest.Mock).toHaveBeenCalledWith(
+      'data',
+      expect.any(Function)
+    );
   });
 
   it('should capture keystrokes when not in sensitive mode', () => {
@@ -36,7 +38,12 @@ describe('Keylogger', () => {
 
     const keystrokes = logger.getKeystrokes();
     expect(keystrokes).toHaveLength(1);
-    expect(keystrokes[0]).toEqual({ key: 'a', timestamp: expect.any(Number), type: 'press', sensitive: false });
+    expect(keystrokes[0]).toEqual({
+      key: 'a',
+      timestamp: expect.any(Number),
+      type: 'press',
+      sensitive: false,
+    });
   });
 
   it('should not capture keystrokes in sensitive mode', () => {

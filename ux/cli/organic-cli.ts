@@ -6,17 +6,19 @@ import type { Keystroke } from '../../core/collector/keylogger';
 interface KeyloggerType {
   start(): Promise<void>;
   stop(): void;
-  getKeystrokes(): { key: string; timestamp: number; type: 'press' | 'release' }[];
+  getKeystrokes(): {
+    key: string;
+    timestamp: number;
+    type: 'press' | 'release';
+  }[];
 }
 
 const program = new Command();
 
-program
-  .name('organic')
-  .description('Organic typing CLI')
-  .version('0.1.0');
+program.name('organic').description('Organic typing CLI').version('0.1.0');
 
-program.command('generate')
+program
+  .command('generate')
   .description('Generate text with organic style')
   .argument('<prompt>', 'text prompt')
   .action((prompt) => {
@@ -24,7 +26,8 @@ program.command('generate')
     console.log(`Generated: ${prompt}`);
   });
 
-program.command('verify')
+program
+  .command('verify')
   .description('Verify typing signature')
   .argument('<file>', 'keystroke data file')
   .action(async (file) => {
@@ -39,11 +42,15 @@ program.command('verify')
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
       const normalized = normalizeKeystrokes(data);
       const stats = calculateStats(normalized);
-      console.log(`Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`);
+      console.log(
+        `Stats: Avg Interval ${stats.averageInterval.toFixed(2)}ms, Pauses: ${stats.pauseCount}`
+      );
       // Encode stats to vector
-      const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
+      const pythonCmd = process.env.CI
+        ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3'
+        : 'python3';
       const encoder = spawn(pythonCmd, ['core/model/organic-encoder.py'], {
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
       });
       const statsJson = JSON.stringify(stats);
       encoder.stdin.write(statsJson);
@@ -60,9 +67,11 @@ program.command('verify')
           try {
             const vector = JSON.parse(vectorOutput.trim());
             // Now verify
-            const pythonCmd = process.env.CI ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3' : 'python3';
+            const pythonCmd = process.env.CI
+              ? '/opt/hostedtoolcache/Python/3.14.0/x64/bin/python3'
+              : 'python3';
             const verifier = spawn(pythonCmd, ['core/model/verifier.py'], {
-              stdio: ['pipe', 'pipe', 'pipe']
+              stdio: ['pipe', 'pipe', 'pipe'],
             });
             verifier.stdin.write(JSON.stringify(vector));
             verifier.stdin.end();
@@ -93,8 +102,11 @@ program.command('verify')
     }
   });
 
-program.command('collect')
-  .description('Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)')
+program
+  .command('collect')
+  .description(
+    'Collect keystroke data (Linux requires root/sudo, macOS requires accessibility permissions)'
+  )
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -133,7 +145,7 @@ program.command('collect')
     try {
       await logger.start();
       // Wait for user to stop, but since CLI, perhaps collect for 10 seconds
-      await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds
+      await new Promise((resolve) => setTimeout(resolve, 10000)); // 10 seconds
       logger.stop();
       const data = logger.getKeystrokes();
       fs.writeFileSync(file, JSON.stringify(data, null, 2));

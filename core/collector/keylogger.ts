@@ -22,7 +22,12 @@ class Keylogger {
         return;
       }
       const key = data.toString();
-      this.keystrokes.push({ key, timestamp: Date.now(), type: 'press', sensitive: this.sensitiveMode });
+      this.keystrokes.push({
+        key,
+        timestamp: Date.now(),
+        type: 'press',
+        sensitive: this.sensitiveMode,
+      });
     });
   }
 

