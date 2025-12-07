@@ -33,13 +33,31 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         global: 'readonly',
+        module: 'readonly',
       },
     },
     plugins: {
       '@typescript-eslint': tseslint,
     },
     rules: {
-      ...tseslint.configs.recommended.rules,
+      // Add TypeScript rules here if needed
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts', 'tests/**/*.ts'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        jest: 'readonly',
+        NodeJS: 'readonly',
+      },
     },
   },
 ];
