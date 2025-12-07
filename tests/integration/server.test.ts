@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: BSD-3-Clause
+jest.mock('@octokit/webhooks', () => ({
+  createNodeMiddleware: jest.fn(
+    () => (req: Request, res: Response, next: NextFunction) => next()
+  ),
+  Webhooks: jest.fn().mockImplementation(() => ({
+    on: jest.fn(),
+  })),
+}));
+
 import request from 'supertest';
-import { Application } from 'express';
+import { Application, Request, Response, NextFunction } from 'express';
 
 describe('Server Endpoints', () => {
   beforeAll(() => {

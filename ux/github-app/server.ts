@@ -38,7 +38,9 @@ const appId = process.env.GITHUB_APP_ID;
 const privateKey = process.env.GITHUB_PRIVATE_KEY;
 
 if (!appId || !privateKey) {
-  throw new Error('GITHUB_APP_ID and GITHUB_PRIVATE_KEY must be set in environment variables.');
+  throw new Error(
+    'GITHUB_APP_ID and GITHUB_PRIVATE_KEY must be set in environment variables.'
+  );
 }
 
 const githubApp = new App({
@@ -55,8 +57,6 @@ function textToKeystrokes(text: string | null): Keystroke[] {
   }
   return keystrokes;
 }
-
-
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handlePullRequest(event: any, isUpdate: boolean) {
@@ -75,17 +75,23 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
 
   // Encode stats using Python model
   const statsJson = JSON.stringify(stats);
-  const encodedVector = JSON.parse(execSync(`python3 core/model/organic-encoder.py`, {
-    input: statsJson,
-    encoding: 'utf-8'
-  }).toString().trim());
+  const encodedVector = JSON.parse(
+    execSync(`python3 core/model/organic-encoder.py`, {
+      input: statsJson,
+      encoding: 'utf-8',
+    })
+      .toString()
+      .trim()
+  );
 
   // Verify using Python model
   const vectorJson = JSON.stringify(encodedVector);
   const verification = execSync(`python3 core/model/verifier.py`, {
     input: vectorJson,
-    encoding: 'utf-8'
-  }).toString().trim();
+    encoding: 'utf-8',
+  })
+    .toString()
+    .trim();
 
   // Update signature atomically
   const userLogin = pr.user.login;

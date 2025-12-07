@@ -22,7 +22,12 @@ class Keylogger {
         // Skip logging multi-char inputs or passwords
         return;
       }
-      this.keystrokes.push({ key, timestamp: Date.now(), type: 'press', sensitive: this.sensitiveMode });
+      this.keystrokes.push({
+        key,
+        timestamp: Date.now(),
+        type: 'press',
+        sensitive: this.sensitiveMode,
+      });
     });
   }
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-export function redact(obj: any) {
+export function redact(obj: Record<string, unknown>) {
   const clone = JSON.parse(JSON.stringify(obj));
   if (clone.key && clone.key.length > 1) clone.key = '[REDACTED]';
   if (clone.text) clone.text = '[REDACTED]';
@@ -7,6 +7,8 @@ export function redact(obj: any) {
 }
 
 export const logger = {
-  info: (obj: any) => console.info(JSON.stringify(redact(obj))),
-  error: (obj: any) => console.error(JSON.stringify(redact(obj))),
+  info: (obj: Record<string, unknown>) =>
+    console.info(JSON.stringify(redact(obj))),
+  error: (obj: Record<string, unknown>) =>
+    console.error(JSON.stringify(redact(obj))),
 };

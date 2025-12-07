@@ -4,7 +4,9 @@ import * as os from 'os';
 
 describe('CLI Integration', () => {
   it('should generate text via CLI', (done) => {
-    const cli = spawn('npm', ['run', 'dev', 'generate', 'test'], { stdio: 'pipe' });
+    const cli = spawn('npm', ['run', 'dev', 'generate', 'test'], {
+      stdio: 'pipe',
+    });
     let output = '';
     cli.stdout.on('data', (data) => {
       output += data.toString();
@@ -21,7 +23,10 @@ describe('CLI Integration', () => {
       console.log('Skipping collect test on non-Linux platform');
       return done();
     }
-    const cli = spawn('npm', ['run', 'dev', 'collect', 'test.json'], { stdio: 'pipe', timeout: 2000 });
+    const cli = spawn('npm', ['run', 'dev', 'collect', 'test.json'], {
+      stdio: 'pipe',
+      timeout: 2000,
+    });
     cli.on('close', (code) => {
       // May fail without sudo or device, but command should exist
       expect(code).toBeDefined();

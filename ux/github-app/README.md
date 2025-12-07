@@ -33,6 +33,7 @@ For webhooks, use ngrok: `ngrok http 3000` and update webhook URL.
 Deploy to a hosting service like Vercel, Heroku, or Railway.
 
 Example for Vercel:
+
 - Set environment variables in Vercel dashboard
 - Deploy with `vercel --prod`
 
