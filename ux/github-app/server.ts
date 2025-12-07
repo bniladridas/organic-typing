@@ -117,7 +117,6 @@ function textToKeystrokes(text: string | null): Keystroke[] {
   return keystrokes;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handlePullRequest(event: any, isUpdate: boolean) {
   const installationId = event.payload.installation?.id;
   if (!installationId) {

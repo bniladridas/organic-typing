@@ -17,9 +17,9 @@ interface LinuxKeyloggerType {
 
 let LinuxKeylogger: (new () => LinuxKeyloggerType) | undefined;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
-} catch (e) {
+  // eslint-disable-next-line no-unused-vars
+} catch (_e) {
   // evdev not available
 }
 

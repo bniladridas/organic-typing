@@ -2,7 +2,8 @@
 interface DOMElement {
   tagName?: string | null;
   type?: string;
-  hasAttribute?: (attr: string) => boolean;
+  // eslint-disable-next-line no-unused-vars
+  hasAttribute?: (_attr: string) => boolean;
 }
 
 export function isSensitiveInput(el: DOMElement | null | undefined): boolean {

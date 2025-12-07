@@ -9,19 +9,20 @@ interface EvdevEvent {
   value: number;
 }
 
+/* eslint-disable no-unused-vars */
 interface EvdevReader {
-  on(event: string, callback: (event: EvdevEvent) => void): void;
+  on(_event: string, callback: (_event: EvdevEvent) => void): void;
   close(): void;
 }
 
 interface Evdev {
   list(): EvdevDevice[];
-  Reader: new (device: EvdevDevice) => EvdevReader;
+  Reader: new (_device: EvdevDevice) => EvdevReader;
   EV_KEY: number;
   KEY: { [key: number]: string };
 }
+/* eslint-enable no-unused-vars */
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const evdev = require('evdev') as Evdev;
 
 const EV_KEY = evdev.EV_KEY;

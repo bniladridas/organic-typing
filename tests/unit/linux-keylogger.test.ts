@@ -9,7 +9,8 @@ interface LinuxKeyloggerType {
     timestamp: number;
     type: 'press' | 'release';
   }[];
-  setSensitiveMode(sensitive: boolean): void;
+  // eslint-disable-next-line no-unused-vars
+  setSensitiveMode(_sensitive: boolean): void;
 }
 
 if (os.platform() === 'linux') {
@@ -26,9 +27,7 @@ if (os.platform() === 'linux') {
     },
   }));
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const mockEvdev = require('evdev');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const LinuxKeyloggerClass =
     require('../../core/collector/linux-keylogger').default;
 

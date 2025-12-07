@@ -6,7 +6,6 @@ const mockStdin = {
   on: jest.fn(),
 } as unknown as NodeJS.ReadStream;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 jest.spyOn(process, 'stdin', 'get').mockReturnValue(mockStdin as any);
 
 describe('Keylogger', () => {
