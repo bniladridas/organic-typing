@@ -6,7 +6,7 @@ services:
   organic-typing-app:
     build: .
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - WEBHOOK_SECRET=${WEBHOOK_SECRET}
