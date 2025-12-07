@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+name: 'Create Version PR'
+description: 'Creates a version bump PR with commit history'
+
+inputs:
+  version:
+    description: 'New version'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get commit history
+      run: |
+        echo "COMMIT_HISTORY<<EOF" >> $GITHUB_ENV
+        git log --oneline -5 >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+      shell: bash
+    - name: Create Pull Request for version bump
+      uses: peter-evans/create-pull-request@v6
+      with:
+        title: 'chore: bump version to ${{ inputs.version }}'
+        body: |
+          Automated version bump to ${{ inputs.version }} based on latest tag.
+
+          ## Recent Commits
+          ```
+          ${{ env.COMMIT_HISTORY }}
+          ```
+        branch: version-bump
+        base: main
+        update-pull-request-branch: always

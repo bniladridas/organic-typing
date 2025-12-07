@@ -1,0 +1,30 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+name: CI
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Environment
+        uses: ./.github/actions/setup-environment
+        with:
+          node-version: '20'
+          python-version: '3.12'
+          go-version: '1.21'
+      - name: Run Go tests
+        run: cd go && go test ./...
+      - name: Lint
+        uses: ./.github/actions/lint
+      - name: Test
+        uses: ./.github/actions/test

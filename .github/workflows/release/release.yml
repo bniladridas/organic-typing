@@ -1,0 +1,20 @@
+# SPDX-License-Identifier: BSD-3-Clause
+---
+# Release workflow for automated tagging and releasing on version bump merge
+name: Release
+permissions:
+  contents: write
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    if: contains(github.event.head_commit.message, 'bump version')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure git
+        uses: ./.github/actions/git-config
+      - name: Create release
+        uses: ./.github/actions/create-release
