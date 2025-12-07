@@ -10,7 +10,5 @@ runs:
       uses: github/codeql-action/init@v3
       with:
         languages: javascript, python
-    - name: Autobuild the code
-      uses: github/codeql-action/autobuild@v3
     - name: Perform CodeQL security analysis
       uses: github/codeql-action/analyze@v3
