@@ -36,7 +36,7 @@
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@eslint/js": "^9.39.1",
+    "@eslint/js": "^9.39.2",
     "@types/cors": "^2.8.19",
     "@types/escape-html": "^1.0.4",
     "@types/express": "^5.0.5",
