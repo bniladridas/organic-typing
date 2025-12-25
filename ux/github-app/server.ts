@@ -8,7 +8,7 @@ import { createNodeMiddleware, Webhooks } from '@octokit/webhooks';
 import { Octokit } from '@octokit/rest';
 import { App } from '@octokit/app';
 import { kv } from '@vercel/kv';
-import { execSync } from 'child_process';
+import { spawn } from 'child_process';
 import crypto from 'crypto';
 import { Keystroke } from '../../core/collector/keylogger';
 import { normalizeKeystrokes } from '../../core/processor/normalize';
@@ -30,22 +30,32 @@ if (!encryptionKeyEnv)
   throw new Error('ENCRYPTION_KEY environment variable must be set');
 const salt = process.env.ENCRYPTION_SALT;
 if (!salt) throw new Error('ENCRYPTION_SALT environment variable must be set');
-const ENCRYPTION_KEY = crypto.scryptSync(encryptionKeyEnv, salt, 32);
 const ALGORITHM = 'aes-256-cbc';
 
-function encrypt(text: string): string {
+const getEncryptionKey = (): Promise<Buffer> => {
+  return new Promise((resolve, reject) => {
+    crypto.scrypt(encryptionKeyEnv, salt, 32, (err, derivedKey) => {
+      if (err) reject(err);
+      else resolve(derivedKey);
+    });
+  });
+};
+
+async function encrypt(text: string): Promise<string> {
+  const key = await getEncryptionKey();
   const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
   return iv.toString('hex') + ':' + encrypted;
 }
 
-function decrypt(encrypted: string): string {
+async function decrypt(encrypted: string): Promise<string> {
+  const key = await getEncryptionKey();
   const parts = encrypted.split(':');
   const iv = Buffer.from(parts[0], 'hex');
   const encryptedText = parts[1];
-  const decipher = crypto.createDecipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
+  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
   let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
   return decrypted;
@@ -135,26 +145,58 @@ async function handlePullRequest(event: any, isUpdate: boolean) {
   // Encode stats using Python model
   const statsJson = JSON.stringify(stats);
   const encodedVector = JSON.parse(
-    execSync(`python3 core/model/organic-encoder.py`, {
-      input: statsJson,
-      encoding: 'utf-8',
+    await new Promise<string>((resolve, reject) => {
+      const child = spawn('python3', ['core/model/organic-encoder.py'], {
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
+      let stdout = '';
+      let stderr = '';
+      child.stdin.write(statsJson);
+      child.stdin.end();
+      child.stdout.on('data', (data) => {
+        stdout += data.toString();
+      });
+      child.stderr.on('data', (data) => {
+        stderr += data.toString();
+      });
+      child.on('close', (code) => {
+        if (code !== 0) {
+          reject(new Error(`Python script failed: ${stderr}`));
+        } else {
+          resolve(stdout.trim());
+        }
+      });
     })
-      .toString()
-      .trim()
   );
 
   // Verify using Python model
   const vectorJson = JSON.stringify(encodedVector);
-  const verification = execSync(`python3 core/model/verifier.py`, {
-    input: vectorJson,
-    encoding: 'utf-8',
-  })
-    .toString()
-    .trim();
+  const verification = await new Promise<string>((resolve, reject) => {
+    const child = spawn('python3', ['core/model/verifier.py'], {
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+    let stdout = '';
+    let stderr = '';
+    child.stdin.write(vectorJson);
+    child.stdin.end();
+    child.stdout.on('data', (data) => {
+      stdout += data.toString();
+    });
+    child.stderr.on('data', (data) => {
+      stderr += data.toString();
+    });
+    child.on('close', (code) => {
+      if (code !== 0) {
+        reject(new Error(`Python script failed: ${stderr}`));
+      } else {
+        resolve(stdout.trim());
+      }
+    });
+  });
 
   // Update signature atomically (encrypted)
   const userLogin = pr.user.login;
-  const encryptedStats = encrypt(JSON.stringify(stats));
+  const encryptedStats = await encrypt(JSON.stringify(stats));
   await kv.hset('signatures', { [userLogin]: encryptedStats });
   console.log(
     `AUDIT: Signature updated for user ${escapeHtml(userLogin)} at ${new Date().toISOString()}`
@@ -211,7 +253,9 @@ app.post('/api/export', requireAuth, async (req: Request, res: Response) => {
   // return aggregated vectors only (decrypted)
   const encryptedVectors = await kv.hget('signatures', userId);
   if (encryptedVectors) {
-    const decryptedVectors = JSON.parse(decrypt(encryptedVectors as string));
+    const decryptedVectors = JSON.parse(
+      await decrypt(encryptedVectors as string)
+    );
     console.log(
       `AUDIT: Data exported for user ${escapeHtml(userId)} from IP ${req.ip} at ${new Date().toISOString()}`
     );

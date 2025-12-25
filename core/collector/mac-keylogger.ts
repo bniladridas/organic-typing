@@ -60,6 +60,10 @@ class MacKeylogger {
   getKeystrokes(): Keystroke[] {
     return this.keystrokes;
   }
+
+  clearKeystrokes() {
+    this.keystrokes = [];
+  }
 }
 
 export default MacKeylogger;

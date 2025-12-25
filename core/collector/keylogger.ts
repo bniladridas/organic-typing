@@ -2,7 +2,7 @@
 export interface Keystroke {
   key: string;
   timestamp: number;
-  type: 'press' | 'release';
+  type: 'press';
   sensitive?: boolean;
 }
 
@@ -38,6 +38,10 @@ class Keylogger {
 
   getKeystrokes(): Keystroke[] {
     return this.keystrokes;
+  }
+
+  clearKeystrokes() {
+    this.keystrokes = [];
   }
 }
 
