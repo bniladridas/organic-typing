@@ -90,6 +90,10 @@ class LinuxKeylogger {
   getKeystrokes(): Keystroke[] {
     return this.keystrokes;
   }
+
+  clearKeystrokes() {
+    this.keystrokes = [];
+  }
 }
 
 export default LinuxKeylogger;
