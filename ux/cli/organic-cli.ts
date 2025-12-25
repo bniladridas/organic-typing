@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// eslint-disable @typescript-eslint/no-require-imports, @typescript-eslint/no-unused-vars
 import { Command } from 'commander';
 import { spawn } from 'child_process';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 import type { Keystroke } from '../../core/collector/keylogger';
 interface KeyloggerType {
   start(): Promise<void>;
@@ -33,11 +34,8 @@ program
   .action(async (file) => {
     console.log(`Verifying signature from: ${file}`);
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const fs = require('fs');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { normalizeKeystrokes } = require('../../core/processor/normalize');
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { calculateStats } = require('../../core/processor/stats');
       const data: Keystroke[] = JSON.parse(fs.readFileSync(file, 'utf8'));
       const normalized = normalizeKeystrokes(data);
@@ -109,14 +107,11 @@ program
   )
   .argument('<file>', 'output file for keystroke data')
   .action(async (file) => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const os = require('os');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const fs = require('fs');
 
     let LinuxKeylogger: (new () => KeyloggerType) | undefined;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       LinuxKeylogger = require('../../core/collector/linux-keylogger').default;
     } catch {
       // evdev not available
@@ -124,7 +119,6 @@ program
 
     let MacKeylogger: (new () => KeyloggerType) | undefined;
     try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
       MacKeylogger = require('../../core/collector/mac-keylogger').default;
     } catch {
       // uiohook not available
@@ -156,4 +150,3 @@ program
   });
 
 program.parse();
-process.exit(0);
